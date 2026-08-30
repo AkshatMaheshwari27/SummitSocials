@@ -21,6 +21,18 @@ export function formatRegistrationRef(id: string): string {
   return `AF-2026-${tail.padStart(6, "0")}`;
 }
 
+const WORKSHOP_DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "Asia/Kolkata",
+});
+
+/** e.g. "12 October 2026" */
+export function formatWorkshopDate(date: Date): string {
+  return WORKSHOP_DATE_FORMAT.format(date);
+}
+
 /** Format minor units (paise) as a display price, e.g. 99900 -> "₹999". */
 export function formatPrice(minor: number, currency: string): string {
   const major = minor / 100;
