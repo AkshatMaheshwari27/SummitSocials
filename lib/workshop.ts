@@ -12,6 +12,15 @@ export async function getCurrentWorkshop() {
   });
 }
 
+/**
+ * Human-facing registration reference, e.g. "AF-2026-8F3K2Q".
+ * Display only — the cuid `id` remains the real key.
+ */
+export function formatRegistrationRef(id: string): string {
+  const tail = id.replace(/[^a-z0-9]/gi, "").slice(-6).toUpperCase();
+  return `AF-2026-${tail.padStart(6, "0")}`;
+}
+
 /** Format minor units (paise) as a display price, e.g. 99900 -> "₹999". */
 export function formatPrice(minor: number, currency: string): string {
   const major = minor / 100;

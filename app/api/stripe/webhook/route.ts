@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
+import { sendConfirmationEmail } from "@/lib/email";
 import {
   markPaymentFailed,
   markPaymentRefunded,
@@ -63,7 +64,7 @@ export async function POST(request: Request) {
             : null);
         if (!registrationId) break;
 
-        const result = await markRegistrationPaid({
+        await markRegistrationPaid({
           registrationId,
           stripeCheckoutSessionId: session.id,
           stripePaymentIntentId:
@@ -74,9 +75,8 @@ export async function POST(request: Request) {
           currency: session.currency,
         });
 
-        if (result.firstTransition) {
-          // Phase 6 wires the confirmation email here (idempotent).
-        }
+        // Idempotent: sends once, retries here on a redelivery if it failed.
+        await sendConfirmationEmail(registrationId);
         break;
       }
 
@@ -85,16 +85,15 @@ export async function POST(request: Request) {
         const registrationId = registrationIdFrom(intent.metadata);
         if (!registrationId) break;
 
-        const result = await markRegistrationPaid({
+        await markRegistrationPaid({
           registrationId,
           stripePaymentIntentId: intent.id,
           amountMinor: intent.amount_received,
           currency: intent.currency,
         });
 
-        if (result.firstTransition) {
-          // Phase 6 wires the confirmation email here (idempotent).
-        }
+        // Idempotent: sends once, retries here on a redelivery if it failed.
+        await sendConfirmationEmail(registrationId);
         break;
       }
 
