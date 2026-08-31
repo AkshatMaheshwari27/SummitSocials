@@ -2,11 +2,13 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 
 type Tone = "green" | "sky" | "coral" | "lavender";
 
-const TONES: Record<Tone, string> = {
-  green: "bg-green-soft",
-  sky: "bg-sky-soft",
-  coral: "bg-coral-soft",
-  lavender: "bg-lavender-soft",
+// Editorial system: retired the pastel fills. The frame is a neutral hairline
+// tile; `tone` now only nudges the icon colour (accent for "green").
+const ICON_TONE: Record<Tone, string> = {
+  green: "text-green-ink",
+  sky: "text-ink-soft",
+  coral: "text-ink-soft",
+  lavender: "text-ink-soft",
 };
 
 const SIZES = {
@@ -27,11 +29,11 @@ export function IconTile({
   className?: string;
 }) {
   return (
-    <span className={`tile ${TONES[tone]} ${SIZES[size]} ${className}`.trim()}>
+    <span className={`tile ${SIZES[size]} ${className}`.trim()}>
       <Icon
         name={icon}
-        className={size === "lg" ? "size-6" : "size-5"}
-        strokeWidth={2.25}
+        className={`${size === "lg" ? "size-6" : "size-5"} ${ICON_TONE[tone]}`}
+        strokeWidth={2}
       />
     </span>
   );

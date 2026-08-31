@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
-type Variant = "green" | "sky" | "white";
+type Variant = "green" | "sky" | "white" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 function cls(variant: Variant, size: Size, extra?: string) {
@@ -10,6 +10,8 @@ function cls(variant: Variant, size: Size, extra?: string) {
     variant === "green" && "btn-green",
     variant === "sky" && "btn-sky",
     variant === "white" && "btn-white",
+    variant === "ghost" && "btn-ghost",
+    variant === "danger" && "btn-danger",
     size === "sm" && "btn-sm",
     size === "lg" && "btn-lg",
     extra,

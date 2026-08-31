@@ -17,7 +17,7 @@ export function Field({ label, name, errors, hint, ...rest }: FieldProps) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={name} className="font-display text-sm font-bold text-ink">
+      <label htmlFor={name} className="text-sm font-semibold text-ink">
         {label}
       </label>
       <input
@@ -29,7 +29,7 @@ export function Field({ label, name, errors, hint, ...rest }: FieldProps) {
         {...rest}
       />
       {hint && !invalid && (
-        <p id={hintId} className="text-xs text-ink-faint">
+        <p id={hintId} className="font-mono text-xs text-ink-faint">
           {hint}
         </p>
       )}

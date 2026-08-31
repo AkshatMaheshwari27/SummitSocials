@@ -2,12 +2,14 @@ import type { ReactNode } from "react";
 
 type Tone = "green" | "sky" | "coral" | "lavender" | "white";
 
+// The .pill base carries the mono/uppercase/hairline treatment; tone only
+// tints the text now that the pastel fills are retired.
 const TONES: Record<Tone, string> = {
-  green: "bg-green-soft text-green-ink",
-  sky: "bg-sky text-ink",
-  coral: "bg-coral-soft text-ink",
-  lavender: "bg-lavender-soft text-ink",
-  white: "bg-surface text-ink",
+  green: "text-green-ink",
+  sky: "text-ink-soft",
+  coral: "text-ink-soft",
+  lavender: "text-ink-soft",
+  white: "text-ink-soft",
 };
 
 export function Pill({

@@ -10,9 +10,10 @@ type Props = {
   links: { href: string; label: string }[];
   isAuthed: boolean;
   signOutAction: () => Promise<void>;
+  cta: { href: string; label: string };
 };
 
-export function NavMobile({ links, isAuthed, signOutAction }: Props) {
+export function NavMobile({ links, isAuthed, signOutAction, cta }: Props) {
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -77,11 +78,11 @@ export function NavMobile({ links, isAuthed, signOutAction }: Props) {
         {open && (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-x-3 top-24 z-50 flex flex-col gap-1 border-2 border-ink bg-surface p-5 shadow-[6px_6px_0_0_var(--color-ink)]"
-            style={{ borderRadius: "22px" }}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, y: -10 }}
+            className="fixed inset-x-3 top-20 z-50 flex flex-col border border-rule-strong bg-surface p-5 shadow-[var(--sh-lg)]"
+            style={{ borderRadius: "14px" }}
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
             animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, y: -10 }}
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
             {links.map((l, i) => (
@@ -90,7 +91,7 @@ export function NavMobile({ links, isAuthed, signOutAction }: Props) {
                 ref={i === 0 ? firstLinkRef : undefined}
                 href={l.href}
                 onClick={close}
-                className="border-b-2 border-ink/10 py-3 font-display text-lg font-bold text-ink"
+                className="border-b border-rule py-3 font-display text-xl font-medium text-ink"
               >
                 {l.label}
               </Link>
@@ -98,19 +99,19 @@ export function NavMobile({ links, isAuthed, signOutAction }: Props) {
             <Link
               href={isAuthed ? "/dashboard" : "/login"}
               onClick={close}
-              className="border-b-2 border-ink/10 py-3 font-display text-lg font-bold text-ink"
+              className="border-b border-rule py-3 font-display text-xl font-medium text-ink"
             >
-              {isAuthed ? "Dashboard" : "Log in"}
+              {isAuthed ? "Dashboard" : "Sign in"}
             </Link>
-            <div className="mt-4 flex flex-col gap-3">
-              <ButtonLink href="/register" className="w-full">
-                Reserve a seat
+            <div className="mt-5 flex flex-col gap-3">
+              <ButtonLink href={cta.href} onClick={close} className="w-full">
+                {cta.label}
               </ButtonLink>
               {isAuthed && (
                 <form action={signOutAction}>
                   <button
                     type="submit"
-                    className="text-sm font-semibold text-ink-soft"
+                    className="text-sm font-medium text-ink-soft"
                   >
                     Sign out
                   </button>
