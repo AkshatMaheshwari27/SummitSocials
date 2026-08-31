@@ -1,4 +1,4 @@
-// AFTERIMAGE — Event Platform
+// Alexa Developers SRM — Event Platform
 // PostgreSQL + Prisma. Auth.js models follow the @auth/prisma-adapter schema.
 
 generator client {

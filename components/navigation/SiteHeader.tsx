@@ -1,52 +1,94 @@
 import Link from "next/link";
 
+import { ButtonLink } from "@/components/ui/Button";
+import { NavMobile } from "@/components/navigation/NavMobile";
 import { auth, signOut } from "@/lib/auth";
+
+const NAV_LINKS = [
+  { href: "/#workshop", label: "Workshop" },
+  { href: "/#learn", label: "What you'll learn" },
+  { href: "/#schedule", label: "Schedule" },
+  { href: "/#club", label: "Community" },
+];
+
+function Logo() {
+  return (
+    <span className="flex items-center gap-2.5">
+      <span className="tile size-9 bg-coral-soft">
+        <span className="font-display text-sm font-bold text-ink">S</span>
+      </span>
+      <span className="font-display text-base font-bold text-ink">
+        Summit <span className="text-green-ink">Socials</span>
+      </span>
+    </span>
+  );
+}
 
 export async function SiteHeader() {
   const session = await auth();
   const user = session?.user;
 
+  async function doSignOut() {
+    "use server";
+    await signOut({ redirectTo: "/" });
+  }
+
   return (
-    <header className="border-b border-black/10">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="font-mono text-xs uppercase tracking-[0.2em]"
-        >
-          AFTERIMAGE
+    <div className="sticky top-0 z-40 px-[var(--gutter)] pt-4">
+      <header className="panel mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-4 py-2.5">
+        <Link href="/" aria-label="Summit Socials home">
+          <Logo />
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+
+        <nav className="hidden items-center gap-6 lg:flex">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="text-sm font-semibold text-ink-soft transition-colors hover:text-ink"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-3 lg:flex">
           {user ? (
             <>
-              <Link href="/dashboard" className="underline-offset-4 hover:underline">
+              <Link
+                href="/dashboard"
+                className="text-sm font-bold text-ink transition-colors hover:text-green-ink"
+              >
                 Dashboard
               </Link>
-              {user.role === "ADMIN" && (
-                <Link href="/admin" className="underline-offset-4 hover:underline">
-                  Admin
-                </Link>
-              )}
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({ redirectTo: "/" });
-                }}
-              >
+              <form action={doSignOut}>
                 <button
                   type="submit"
-                  className="underline-offset-4 hover:underline"
+                  className="text-sm font-semibold text-ink-soft transition-colors hover:text-ink"
                 >
                   Sign out
                 </button>
               </form>
             </>
           ) : (
-            <Link href="/login" className="underline-offset-4 hover:underline">
-              Sign in
+            <Link
+              href="/login"
+              className="text-sm font-bold text-ink transition-colors hover:text-green-ink"
+            >
+              Log in
             </Link>
           )}
-        </nav>
-      </div>
-    </header>
+          <ButtonLink href="/register" size="sm" variant="green">
+            Reserve a seat
+          </ButtonLink>
+        </div>
+
+        <NavMobile
+          links={NAV_LINKS}
+          isAuthed={Boolean(user)}
+          signOutAction={doSignOut}
+        />
+      </header>
+    </div>
   );
 }

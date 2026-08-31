@@ -1,4 +1,4 @@
-# AFTERIMAGE — Event Platform
+# Summit Socials — Event Platform
 
 ## 1. PROJECT MISSION
 
@@ -28,7 +28,11 @@ DO NOT build a generic AI-generated SaaS dashboard.
 
 Name:
 
-AFTERIMAGE
+Summit Socials
+
+Tagline:
+
+Connecting builders, shipping tomorrow's tech.
 
 Positioning:
 
@@ -121,7 +125,7 @@ Hierarchy should be obvious.
 
 Example:
 
-AFTERIMAGE
+SUMMIT SOCIALS
 
 A WORKSHOP IN
 MAKING THINGS
@@ -568,13 +572,13 @@ Email should only be sent after verified payment.
 
 Email content:
 
-AFTERIMAGE
+SUMMIT SOCIALS
 
 REGISTRATION CONFIRMED
 
 Hi [Name],
 
-Your place at AFTERIMAGE is confirmed.
+Your place at Prompt to Product is confirmed.
 
 WORKSHOP
 [Workshop Name]
@@ -740,7 +744,7 @@ Keep login simple.
 
 Visual direction:
 
-AFTERIMAGE
+SUMMIT SOCIALS
 
 YOU'RE ON THE LIST.
 
@@ -762,7 +766,7 @@ The homepage is the primary visual showcase.
 
 Suggested information hierarchy:
 
-AFTERIMAGE
+SUMMIT SOCIALS
 
 A WORKSHOP IN
 MAKING THINGS
@@ -1470,7 +1474,7 @@ Use the reference as a design direction.
 
 Do NOT copy the branding, text, images, logos, or exact visual assets.
 
-Adapt the structure and principles to AFTERIMAGE.
+Adapt the structure and principles to Summit Socials.
 
 ## Visual QA
 

@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
 
 /**
- * AFTERIMAGE sells a single workshop. It is identified by this slug and
+ * This platform sells a single workshop. It is identified by this slug and
  * created by `prisma/seed.ts`.
  */
-export const CURRENT_WORKSHOP_SLUG = "afterimage-2026";
+export const CURRENT_WORKSHOP_SLUG = "build-with-ai-2026";
 
 export async function getCurrentWorkshop() {
   return prisma.workshop.findUnique({
@@ -13,12 +13,12 @@ export async function getCurrentWorkshop() {
 }
 
 /**
- * Human-facing registration reference, e.g. "AF-2026-8F3K2Q".
+ * Human-facing registration reference, e.g. "SS-2026-8F3K2Q".
  * Display only — the cuid `id` remains the real key.
  */
 export function formatRegistrationRef(id: string): string {
   const tail = id.replace(/[^a-z0-9]/gi, "").slice(-6).toUpperCase();
-  return `AF-2026-${tail.padStart(6, "0")}`;
+  return `SS-2026-${tail.padStart(6, "0")}`;
 }
 
 const WORKSHOP_DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {

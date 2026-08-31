@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 
-export function CheckoutButton() {
+import { Button } from "@/components/ui/Button";
+
+export function CheckoutButton({ amountLabel }: { amountLabel: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function start() {
+    if (pending) return;
     setPending(true);
     setError(null);
     try {
@@ -29,17 +32,19 @@ export function CheckoutButton() {
   }
 
   return (
-    <div className="space-y-2">
-      <button
+    <div className="flex flex-col gap-2">
+      <Button
         type="button"
-        onClick={start}
-        disabled={pending}
-        className="border border-black px-5 py-2.5 text-sm disabled:opacity-50"
+        onClick={() => void start()}
+        loading={pending}
+        size="lg"
+        variant="green"
+        className="w-full"
       >
-        {pending ? "Redirecting to checkout…" : "Pay with card"}
-      </button>
+        {pending ? "Redirecting to Stripe…" : `Pay ${amountLabel}`}
+      </Button>
       {error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm font-semibold text-danger">
           {error}
         </p>
       )}

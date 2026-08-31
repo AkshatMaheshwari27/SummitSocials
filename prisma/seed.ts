@@ -3,22 +3,23 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 /**
- * The single workshop AFTERIMAGE sells.
+ * The single workshop this platform sells: "Prompt to Product" by Summit
+ * Socials.
  *
- * priceMinor is in the smallest currency unit (paise). ₹999.00 -> 99900.
+ * priceMinor is in the smallest currency unit (paise). Rs 299.00 -> 29900.
  * This value is the only source of truth for the amount charged by Stripe.
  */
 const WORKSHOP = {
-  slug: "afterimage-2026",
-  title: "AFTERIMAGE",
+  slug: "build-with-ai-2026",
+  title: "Prompt to Product",
   description:
-    "One day. Forty-eight seats. We work through a single object from first " +
-    "sketch to finished piece — ideation, prototyping, building, shipping — " +
-    "and leave with something real, not a certificate. Lunch and materials " +
-    "are included. Bring a notebook and a project you have been putting off.",
-  date: new Date("2026-10-12T09:00:00+05:30"),
-  location: "Bengaluru",
-  priceMinor: 99900,
+    "A hands-on workshop that takes you from prompt to product. Learn practical " +
+    "AI integration — prompting, API calls, and building an interface — and " +
+    "leave with a small working application you built yourself. Beginner-friendly. " +
+    "Bring a laptop and an idea you have been meaning to try.",
+  date: new Date("2026-10-12T10:00:00+05:30"),
+  location: "SRMIST, Kattankulathur",
+  priceMinor: 29900,
   currency: "inr",
   capacity: 48,
 } as const;

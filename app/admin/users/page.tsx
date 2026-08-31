@@ -1,11 +1,15 @@
 import type { RegistrationStatus } from "@prisma/client";
 
+import { Container } from "@/components/ui/Container";
+import { Icon } from "@/components/ui/Icon";
+import { Pill } from "@/components/ui/Pill";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { listRegistrations } from "@/lib/admin";
 
 const STATUS_OPTIONS = ["ALL", "PENDING", "PAID", "CANCELLED"] as const;
 type StatusOption = (typeof STATUS_OPTIONS)[number];
 
-const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
+const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
   month: "short",
   year: "numeric",
@@ -29,80 +33,99 @@ export default async function AdminUsersPage({
   const rows = await listRegistrations({
     q,
     status:
-      statusOption === "ALL"
-        ? "ALL"
-        : (statusOption as RegistrationStatus),
+      statusOption === "ALL" ? "ALL" : (statusOption as RegistrationStatus),
   });
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Registered users</h1>
+    <Container className="py-[var(--section-y)]">
+      <Pill tone="green">Event management</Pill>
+      <h1 className="h-section mt-4">All registrations</h1>
 
-      <form method="get" className="flex flex-wrap items-end gap-3 text-sm">
-        <label className="flex flex-col gap-1">
-          <span className="text-black/50">Search</span>
+      <form method="get" className="mt-8 flex flex-wrap items-center gap-3">
+        <div className="relative">
+          <Icon
+            name="message"
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint"
+            strokeWidth={2.25}
+          />
           <input
             type="search"
             name="q"
             defaultValue={q ?? ""}
-            placeholder="Name, email, organization"
-            className="border border-black/30 px-3 py-2"
+            placeholder="Search name, email, organization"
+            aria-label="Search registrations"
+            className="field-input w-72 pl-9"
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-black/50">Status</span>
-          <select
-            name="status"
-            defaultValue={statusOption}
-            className="border border-black/30 px-3 py-2"
-          >
-            {STATUS_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="submit" className="border border-black px-4 py-2">
-          Apply
-        </button>
+        </div>
+        <input type="hidden" name="status" value={statusOption} />
+        <div className="flex flex-wrap gap-2">
+          {STATUS_OPTIONS.map((opt) => {
+            const active = opt === statusOption;
+            return (
+              <button
+                key={opt}
+                type="submit"
+                name="status"
+                value={opt}
+                aria-pressed={active}
+                className={
+                  "border-2 border-ink px-3 py-1.5 text-xs font-bold transition-transform active:translate-y-0.5 " +
+                  (active ? "bg-green text-white" : "bg-surface text-ink hover:bg-cream")
+                }
+                style={{ borderRadius: "999px" }}
+              >
+                {opt.charAt(0) + opt.slice(1).toLowerCase()}
+              </button>
+            );
+          })}
+        </div>
       </form>
 
-      <p className="text-xs text-black/50">
+      <p className="mt-6 text-sm font-semibold text-ink-soft">
         {rows.length} {rows.length === 1 ? "registration" : "registrations"}
       </p>
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm">
+      <div className="mt-3 overflow-x-auto panel p-0">
+        <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-black/20 text-left font-mono text-xs uppercase tracking-[0.1em] text-black/50">
-              <th className="py-2 pr-4">Name</th>
-              <th className="py-2 pr-4">Email</th>
-              <th className="py-2 pr-4">Registration</th>
-              <th className="py-2 pr-4">Payment</th>
-              <th className="py-2 pr-4">Date</th>
+            <tr className="border-b-2 border-ink bg-cream text-left">
+              <th className="sticky left-0 bg-cream px-4 py-3 font-display font-bold text-ink">
+                Name
+              </th>
+              <th className="px-4 py-3 font-display font-bold text-ink">Email</th>
+              <th className="px-4 py-3 font-display font-bold text-ink">Reference</th>
+              <th className="px-4 py-3 font-display font-bold text-ink">Registration</th>
+              <th className="px-4 py-3 font-display font-bold text-ink">Payment</th>
+              <th className="px-4 py-3 font-display font-bold text-ink">Placed</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.id} className="border-b border-black/10 align-top">
-                <td className="py-2 pr-4">{row.fullName}</td>
-                <td className="py-2 pr-4">{row.email}</td>
-                <td className="py-2 pr-4 font-mono">
-                  {row.ref}
-                  <span className="block text-xs text-black/40">
-                    {row.status}
-                  </span>
+            {rows.map((r) => (
+              <tr
+                key={r.id}
+                className="border-b-2 border-ink/10 last:border-0 hover:bg-cream"
+              >
+                <td className="sticky left-0 bg-surface px-4 py-3 font-semibold text-ink">
+                  {r.fullName}
                 </td>
-                <td className="py-2 pr-4">{row.paymentStatus ?? "—"}</td>
-                <td className="py-2 pr-4 whitespace-nowrap">
-                  {DATE_FORMAT.format(new Date(row.createdAt))}
+                <td className="px-4 py-3 text-ink-soft">{r.email}</td>
+                <td className="px-4 py-3 font-mono text-xs text-ink-soft">
+                  {r.ref}
+                </td>
+                <td className="px-4 py-3">
+                  <StatusBadge status={r.status} />
+                </td>
+                <td className="px-4 py-3">
+                  <StatusBadge status={r.paymentStatus} />
+                </td>
+                <td className="whitespace-nowrap px-4 py-3 text-ink-soft">
+                  {DATE_FMT.format(new Date(r.createdAt))}
                 </td>
               </tr>
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-6 text-center text-black/50">
+                <td colSpan={6} className="px-4 py-10 text-center text-ink-faint">
                   No registrations match.
                 </td>
               </tr>
@@ -110,6 +133,6 @@ export default async function AdminUsersPage({
           </tbody>
         </table>
       </div>
-    </div>
+    </Container>
   );
 }

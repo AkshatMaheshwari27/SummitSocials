@@ -1,13 +1,20 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { RegistrationCard } from "@/components/registration/RegistrationCard";
+import { SuccessReveal } from "@/components/success/SuccessReveal";
+import { ButtonLink } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { IconTile } from "@/components/ui/IconTile";
 import { requireUser } from "@/lib/permissions";
 import { getMyRegistration } from "@/lib/registration";
-import { formatRegistrationRef } from "@/lib/workshop";
+import { formatRegistrationRef, formatWorkshopDate } from "@/lib/workshop";
+
+const ORG = "Summit Socials";
+const EVENT_TIME = "10:00 AM – 1:00 PM";
 
 /**
- * Reaching this page is NOT proof of payment. The status shown here comes
- * from our database, which is only updated by the verified Stripe webhook.
+ * Reaching this page is NOT proof of payment. Status is read from the
+ * database, which is only updated by the verified Stripe webhook.
  */
 export default async function SuccessPage() {
   const user = await requireUser();
@@ -19,42 +26,65 @@ export default async function SuccessPage() {
 
   const paid =
     registration.status === "PAID" || registration.payment?.status === "PAID";
+  const w = registration.workshop;
 
-  if (paid) {
+  if (!paid) {
     return (
-      <div className="max-w-lg space-y-4">
-        <h1 className="text-2xl font-semibold">Registration confirmed</h1>
-        <p className="text-sm">Your payment has been received.</p>
-        <p className="text-sm text-black/60">
-          We&apos;ve sent your confirmation to {registration.email}.
-        </p>
-        <p className="font-mono text-sm">
-          {formatRegistrationRef(registration.id)}
-        </p>
-        <Link
-          href="/dashboard"
-          className="inline-block border border-black px-5 py-2.5 text-sm"
-        >
-          View my registration
-        </Link>
-      </div>
+      <Container className="py-[var(--section-y)]">
+        <div className="mx-auto max-w-lg text-center">
+          <div className="flex justify-center">
+            <IconTile icon="clock" tone="coral" size="lg" />
+          </div>
+          <h1 className="h-section mt-5">Payment received</h1>
+          <p className="lede mt-3">
+            We&rsquo;re confirming your payment with Stripe. This page shows your
+            real status from our records — refresh in a moment.
+          </p>
+          <div className="mt-8">
+            <ButtonLink href="/dashboard" variant="sky">
+              Go to my dashboard
+            </ButtonLink>
+          </div>
+        </div>
+      </Container>
     );
   }
 
   return (
-    <div className="max-w-lg space-y-4">
-      <h1 className="text-2xl font-semibold">Payment processing</h1>
-      <p className="text-sm">
-        We&apos;re verifying your payment with Stripe. This page reflects your
-        registration status from our records, not the checkout redirect —
-        refresh in a moment.
-      </p>
-      <Link
-        href="/dashboard"
-        className="inline-block border border-black px-5 py-2.5 text-sm"
-      >
-        Go to my dashboard
-      </Link>
-    </div>
+    <Container className="py-[var(--section-y)]">
+      <SuccessReveal>
+        <div className="text-center">
+          <div className="flex justify-center">
+            <IconTile icon="check" tone="green" size="lg" />
+          </div>
+          <h1 className="h-section mt-5">You&rsquo;re in!</h1>
+          <p className="lede mx-auto mt-3 max-w-md">
+            Your seat is confirmed. We&rsquo;ve emailed a copy to{" "}
+            {registration.email}.
+          </p>
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <RegistrationCard
+            org={ORG}
+            workshopTitle={w.title}
+            reference={formatRegistrationRef(registration.id)}
+            rows={[
+              { icon: "calendar", label: "Date", value: formatWorkshopDate(w.date) },
+              { icon: "clock", label: "Time", value: EVENT_TIME },
+              { icon: "pin", label: "Where", value: w.location },
+            ]}
+            registrationStatus={registration.status}
+            paymentStatus={registration.payment?.status ?? undefined}
+          />
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <ButtonLink href="/dashboard" variant="green">
+            Go to my dashboard
+          </ButtonLink>
+        </div>
+      </SuccessReveal>
+    </Container>
   );
 }

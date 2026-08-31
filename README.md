@@ -1,4 +1,4 @@
-# AFTERIMAGE — Event Platform
+# Summit Socials — Event Platform
 
 A production-style paid workshop registration platform built with Next.js, PostgreSQL, OAuth, Stripe Checkout, and email confirmation.
 
@@ -12,7 +12,7 @@ It also includes a protected admin area for viewing registered users.
 
 # 1. Project Overview
 
-AFTERIMAGE is a paid workshop registration platform designed around a real event rather than a generic SaaS product.
+Summit Socials is a paid workshop registration platform designed around a real event rather than a generic SaaS product.
 
 The application allows users to:
 
@@ -124,7 +124,7 @@ The application intentionally avoids the typical AI-generated SaaS aesthetic.
 
 The visual identity is called:
 
-# AFTERIMAGE
+# Summit Socials
 
 The design direction is inspired by:
 
@@ -168,7 +168,7 @@ Use a deliberate combination of:
 Example:
 
 ```text
-AFTERIMAGE
+SUMMIT SOCIALS
 
 A WORKSHOP IN
 MAKING THINGS
@@ -659,7 +659,7 @@ After successful verified payment, the user receives a confirmation email.
 The email should contain:
 
 ```text
-AFTERIMAGE
+SUMMIT SOCIALS
 
 REGISTRATION CONFIRMED
 
@@ -1084,12 +1084,12 @@ The user dashboard should show the currently authenticated user's information.
 Example:
 
 ```text
-AFTERIMAGE
+SUMMIT SOCIALS
 
 YOUR REGISTRATION
 
 WORKSHOP
-Afterimage Workshop
+Prompt to Product
 
 DATE
 12 October 2026
@@ -1098,7 +1098,7 @@ LOCATION
 Bengaluru
 
 REGISTRATION
-AF-2026-0042
+SS-2026-0042
 
 PAYMENT
 PAID
@@ -1115,7 +1115,7 @@ The landing page is the visual centerpiece of the project.
 A possible composition:
 
 ```text
-AFTERIMAGE
+SUMMIT SOCIALS
 
 A WORKSHOP IN
 MAKING THINGS
@@ -1484,7 +1484,7 @@ git commit -m "feat: create admin dashboard"
 
 ```bash
 git add .
-git commit -m "style: refine AFTERIMAGE frontend"
+git commit -m "style: refine Summit Socials frontend"
 ```
 
 ---
@@ -1634,7 +1634,7 @@ The application is considered complete only when:
 
 ### Frontend
 
-- [ ] Distinct AFTERIMAGE visual identity
+- [ ] Distinct Summit Socials visual identity
 - [ ] Responsive design
 - [ ] Accessible forms
 - [ ] Loading states
@@ -1677,7 +1677,7 @@ Do not mark a component as complete until it has been implemented and tested.
 
 # 58. Author
 
-Event Platform / AFTERIMAGE
+Event Platform / Summit Socials
 
 Built as a university web development project demonstrating:
 

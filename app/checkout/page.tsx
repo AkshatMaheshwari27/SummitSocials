@@ -1,9 +1,15 @@
 import { redirect } from "next/navigation";
 
 import { CheckoutButton } from "@/components/checkout/CheckoutButton";
+import { Card } from "@/components/ui/Card";
+import { Container } from "@/components/ui/Container";
+import { Icon } from "@/components/ui/Icon";
+import { Pill } from "@/components/ui/Pill";
 import { requireUser } from "@/lib/permissions";
 import { getMyRegistration } from "@/lib/registration";
 import { formatPrice, formatWorkshopDate } from "@/lib/workshop";
+
+const EVENT_TIME = "10:00 AM – 1:00 PM";
 
 export default async function CheckoutPage({
   searchParams,
@@ -15,7 +21,11 @@ export default async function CheckoutPage({
   const { workshop, registration } = await getMyRegistration(user.id);
 
   if (!workshop) {
-    return <p className="text-sm text-black/60">Checkout isn&apos;t available yet.</p>;
+    return (
+      <Container className="py-[var(--section-y)]">
+        <p className="lede">Checkout isn&rsquo;t available yet.</p>
+      </Container>
+    );
   }
   if (!registration || registration.status === "CANCELLED") {
     redirect("/register");
@@ -24,37 +34,64 @@ export default async function CheckoutPage({
     redirect("/dashboard");
   }
 
+  const price = formatPrice(workshop.priceMinor, workshop.currency);
+
   return (
-    <div className="max-w-lg space-y-6">
-      <h1 className="text-2xl font-semibold">Checkout</h1>
+    <Container className="py-[var(--section-y)]">
+      <div className="mx-auto max-w-lg">
+        <Pill tone="green">Step 2 of 2</Pill>
+        <h1 className="h-section mt-4">Confirm and pay</h1>
 
-      {canceled && (
-        <p
-          role="status"
-          className="border border-black/20 bg-black/[0.03] px-4 py-3 text-sm"
-        >
-          Payment not completed. Your registration is saved — you can return to
-          checkout when you&apos;re ready.
-        </p>
-      )}
+        {canceled && (
+          <p
+            role="status"
+            className="mt-6 border-2 border-ink bg-coral-soft px-4 py-3 text-sm font-semibold text-ink"
+            style={{ borderRadius: "12px" }}
+          >
+            Payment wasn&rsquo;t completed. Your seat is still held — pay whenever
+            you&rsquo;re ready.
+          </p>
+        )}
 
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-2 text-sm">
-        <dt className="text-black/50">Workshop</dt>
-        <dd>{workshop.title}</dd>
-        <dt className="text-black/50">Date</dt>
-        <dd>{formatWorkshopDate(workshop.date)}</dd>
-        <dt className="text-black/50">Location</dt>
-        <dd>{workshop.location}</dd>
-        <dt className="text-black/50">Amount</dt>
-        <dd>{formatPrice(workshop.priceMinor, workshop.currency)}</dd>
-      </dl>
+        <Card className="mt-8 overflow-hidden">
+          <div className="border-b-2 border-ink bg-cream p-6">
+            <h2 className="font-display text-lg font-bold tracking-tight text-ink">
+              {workshop.title}
+            </h2>
+            <dl className="mt-3 space-y-2 text-sm text-ink-soft">
+              <div className="flex items-center gap-2.5">
+                <Icon name="calendar" className="size-4" strokeWidth={2.25} />
+                {formatWorkshopDate(workshop.date)} · {EVENT_TIME}
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Icon name="pin" className="size-4" strokeWidth={2.25} />
+                {workshop.location}
+              </div>
+            </dl>
+          </div>
 
-      <p className="text-xs text-black/50">
-        Payments are processed by Stripe in test mode. Use card 4242 4242 4242
-        4242 with any future expiry and any CVC.
-      </p>
+          <div className="p-6">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-ink-soft">Workshop seat</span>
+              <span className="font-semibold text-ink">{price}</span>
+            </div>
+            <div className="mt-3 flex items-baseline justify-between border-t-2 border-ink/15 pt-3">
+              <span className="font-bold text-ink">Total</span>
+              <span className="font-display text-2xl font-bold tracking-tight text-ink">
+                {price}
+              </span>
+            </div>
 
-      <CheckoutButton />
-    </div>
+            <div className="mt-6">
+              <CheckoutButton amountLabel={price} />
+            </div>
+            <p className="mt-3 text-xs text-ink-faint">
+              You&rsquo;ll be redirected to Stripe. Test mode — use card 4242 4242
+              4242 4242, any future expiry, any CVC.
+            </p>
+          </div>
+        </Card>
+      </div>
+    </Container>
   );
 }

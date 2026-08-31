@@ -14,7 +14,7 @@ function getResend(): Resend {
 }
 
 function fromAddress(): string {
-  return process.env.EMAIL_FROM ?? "AFTERIMAGE <onboarding@resend.dev>";
+  return process.env.EMAIL_FROM ?? "Summit Socials <onboarding@resend.dev>";
 }
 
 const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
@@ -71,7 +71,7 @@ export async function sendConfirmationEmail(
     const { error } = await getResend().emails.send({
       from: fromAddress(),
       to: registration.email,
-      subject: "Your place at AFTERIMAGE is confirmed",
+      subject: "Your place at Prompt to Product is confirmed",
       text: buildText({
         name: recipientName,
         workshop: registration.workshop.title,
@@ -114,58 +114,60 @@ type EmailFields = {
 
 function buildText(f: EmailFields): string {
   return [
-    "AFTERIMAGE",
+    "SUMMIT SOCIALS",
     "",
     "REGISTRATION CONFIRMED",
     "",
     `Hi ${f.name},`,
     "",
-    "Your place at AFTERIMAGE is confirmed.",
+    "Your place at Prompt to Product is confirmed.",
     "",
-    `WORKSHOP    ${f.workshop}`,
-    `DATE        ${f.date}`,
-    `LOCATION    ${f.location}`,
+    `WORKSHOP     ${f.workshop}`,
+    `DATE         ${f.date}`,
+    `LOCATION     ${f.location}`,
     `REGISTRATION ${f.ref}`,
-    "PAYMENT     Paid",
+    "PAYMENT      Paid",
     "",
     "See you there.",
   ].join("\n");
 }
 
 function buildHtml(f: EmailFields): string {
+  const sans =
+    "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
   const row = (label: string, value: string) => `
     <tr>
-      <td style="padding:10px 0;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0.08em;color:#6b6a63;text-transform:uppercase;width:130px;vertical-align:top;">${label}</td>
-      <td style="padding:10px 0;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a1a1a;">${value}</td>
+      <td style="padding:10px 0;font:12px/1.4 ${sans};letter-spacing:0.06em;color:#7a879e;text-transform:uppercase;width:130px;vertical-align:top;">${label}</td>
+      <td style="padding:10px 0;font:16px/1.5 ${sans};color:#0e1526;">${value}</td>
     </tr>`;
 
   return `<!doctype html>
 <html lang="en">
-<body style="margin:0;padding:0;background:#f4f1ea;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ea;padding:40px 16px;">
+<body style="margin:0;padding:0;background:#f6f8fc;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f8fc;padding:40px 16px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;background:#faf8f2;border:1px solid #e2ded2;">
+        <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #e4e9f2;border-radius:12px;">
           <tr>
-            <td style="padding:32px 32px 0;font:13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0.22em;color:#1a1a1a;text-transform:uppercase;">AFTERIMAGE</td>
+            <td style="padding:32px 32px 0;font:13px/1 ${sans};font-weight:600;letter-spacing:0.12em;color:#0b6fe0;text-transform:uppercase;">Summit Socials</td>
           </tr>
           <tr>
-            <td style="padding:24px 32px 0;font:600 26px/1.2 Georgia,'Times New Roman',serif;color:#1a1a1a;">Registration confirmed</td>
+            <td style="padding:16px 32px 0;font:700 26px/1.2 ${sans};color:#0e1526;">Registration confirmed</td>
           </tr>
           <tr>
-            <td style="padding:8px 32px 0;">
-              <div style="height:2px;width:44px;background:#c8492b;"></div>
+            <td style="padding:12px 32px 0;">
+              <div style="height:3px;width:44px;background:#0b6fe0;border-radius:999px;"></div>
             </td>
           </tr>
           <tr>
-            <td style="padding:20px 32px 0;font:16px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#33322c;">
+            <td style="padding:20px 32px 0;font:16px/1.6 ${sans};color:#4a5771;">
               Hi ${f.name},<br /><br />
-              Your place at AFTERIMAGE is confirmed. Keep this email for your records.
+              Your place at Prompt to Product is confirmed. Keep this email for your records.
             </td>
           </tr>
           <tr>
             <td style="padding:20px 32px 8px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e2ded2;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e4e9f2;">
                 ${row("Workshop", f.workshop)}
                 ${row("Date", f.date)}
                 ${row("Location", f.location)}
@@ -175,7 +177,7 @@ function buildHtml(f: EmailFields): string {
             </td>
           </tr>
           <tr>
-            <td style="padding:8px 32px 36px;font:14px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#6b6a63;">
+            <td style="padding:8px 32px 36px;font:14px/1.6 ${sans};color:#7a879e;">
               See you there.
             </td>
           </tr>

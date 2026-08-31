@@ -1,57 +1,84 @@
-import Link from "next/link";
-
+import { RegistrationCard } from "@/components/registration/RegistrationCard";
+import { ButtonLink } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { Pill } from "@/components/ui/Pill";
 import { requireUser } from "@/lib/permissions";
 import { getMyRegistration } from "@/lib/registration";
 import { formatRegistrationRef, formatWorkshopDate } from "@/lib/workshop";
 
+const ORG = "Summit Socials";
+const EVENT_TIME = "10:00 AM – 1:00 PM";
+
 export default async function DashboardPage() {
   const user = await requireUser();
-  const { registration } = await getMyRegistration(user.id);
-
-  const hasRegistration =
-    registration && registration.status !== "CANCELLED";
+  const { workshop, registration } = await getMyRegistration(user.id);
+  const hasRegistration = registration && registration.status !== "CANCELLED";
+  const firstName = user.name?.split(" ")[0];
 
   return (
-    <div className="max-w-lg space-y-6">
-      <h1 className="text-2xl font-semibold">Your registration</h1>
-
-      {!hasRegistration ? (
-        <p className="text-sm">
-          You haven&apos;t registered yet.{" "}
-          <Link href="/register" className="underline underline-offset-4">
-            Register for the workshop
-          </Link>
-          .
+    <Container className="py-[var(--section-y)]">
+      <div className="max-w-3xl">
+        <Pill tone="green">Your dashboard</Pill>
+        <h1 className="h-section mt-4">
+          {firstName ? `Hi ${firstName}` : "Welcome"}
+        </h1>
+        <p className="lede mt-3">
+          {hasRegistration
+            ? "Here's your registration for the workshop."
+            : "You haven't reserved a seat yet."}
         </p>
-      ) : (
-        <>
-          <dl className="grid grid-cols-[9rem_1fr] gap-y-2 text-sm">
-            <dt className="text-black/50">Workshop</dt>
-            <dd>{registration.workshop.title}</dd>
-            <dt className="text-black/50">Date</dt>
-            <dd>{formatWorkshopDate(registration.workshop.date)}</dd>
-            <dt className="text-black/50">Location</dt>
-            <dd>{registration.workshop.location}</dd>
-            <dt className="text-black/50">Registration</dt>
-            <dd className="font-mono">
-              {formatRegistrationRef(registration.id)}
-            </dd>
-            <dt className="text-black/50">Registration status</dt>
-            <dd>{registration.status}</dd>
-            <dt className="text-black/50">Payment</dt>
-            <dd>{registration.payment?.status ?? "—"}</dd>
-          </dl>
+      </div>
 
-          {registration.status === "PENDING" && (
-            <Link
-              href="/checkout"
-              className="inline-block border border-black px-5 py-2.5 text-sm"
-            >
-              Complete payment
-            </Link>
-          )}
-        </>
-      )}
-    </div>
+      <div className="mt-10">
+        {!hasRegistration ? (
+          <RegistrationCard
+            org={ORG}
+            placeholder
+            workshopTitle={workshop?.title ?? ""}
+            reference=""
+            rows={[]}
+          >
+            <p className="mt-1 text-sm text-ink-soft">
+              Reserve your seat for {workshop?.title ?? "the workshop"}.
+            </p>
+            <div className="mt-4">
+              <ButtonLink href="/register">Reserve a seat</ButtonLink>
+            </div>
+          </RegistrationCard>
+        ) : (
+          <RegistrationCard
+            org={ORG}
+            workshopTitle={registration.workshop.title}
+            reference={formatRegistrationRef(registration.id)}
+            rows={[
+              {
+                icon: "calendar",
+                label: "Date",
+                value: formatWorkshopDate(registration.workshop.date),
+              },
+              { icon: "clock", label: "Time", value: EVENT_TIME },
+              {
+                icon: "pin",
+                label: "Where",
+                value: registration.workshop.location,
+              },
+            ]}
+            registrationStatus={registration.status}
+            paymentStatus={registration.payment?.status ?? undefined}
+          >
+            {registration.status === "PENDING" && (
+              <div className="border-t-2 border-ink bg-coral-soft p-6">
+                <p className="text-sm font-semibold text-ink">
+                  Your seat is held but payment isn&rsquo;t complete yet.
+                </p>
+                <div className="mt-4">
+                  <ButtonLink href="/checkout">Complete payment</ButtonLink>
+                </div>
+              </div>
+            )}
+          </RegistrationCard>
+        )}
+      </div>
+    </Container>
   );
 }

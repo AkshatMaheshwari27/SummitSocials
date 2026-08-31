@@ -17,7 +17,7 @@ export function getStripe(): Stripe {
 
   client = new Stripe(apiKey, {
     typescript: true,
-    appInfo: { name: "AFTERIMAGE Event Platform" },
+    appInfo: { name: "Alexa Developers SRM Event Platform" },
   });
   return client;
 }
