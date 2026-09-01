@@ -2,6 +2,8 @@
 
 A production-style paid workshop registration platform built with Next.js, PostgreSQL, OAuth, Stripe Checkout, and email confirmation.
 
+**Live Demo:** https://summit-socials.vercel.app/
+
 The project demonstrates a complete real-world registration flow:
 
 **OAuth login → workshop registration → Stripe payment → verified webhook → confirmation email → user dashboard**
