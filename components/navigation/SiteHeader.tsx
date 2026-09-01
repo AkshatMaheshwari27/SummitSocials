@@ -15,11 +15,11 @@ function Logo() {
     <span className="flex items-center gap-2.5">
       <span
         aria-hidden
-        className="grid size-6 place-items-center rounded-[5px] border border-rule-strong font-display text-sm font-semibold text-ink"
+        className="hidden size-6 place-items-center rounded-[5px] border border-rule-strong font-display text-sm font-semibold text-ink sm:grid"
       >
         S
       </span>
-      <span className="font-display text-lg font-medium tracking-tight text-ink">
+      <span className="font-display text-base font-medium tracking-tight text-ink sm:text-lg">
         Summit Socials
       </span>
     </span>
@@ -63,9 +63,9 @@ export async function SiteHeader() {
           )}
         </nav>
 
-        <div className="hidden items-center gap-4 lg:flex">
+        <div className="flex items-center gap-2 sm:gap-4">
           {user ? (
-            <form action={doSignOut}>
+            <form action={doSignOut} className="hidden lg:block">
               <button
                 type="submit"
                 className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
@@ -76,7 +76,7 @@ export async function SiteHeader() {
           ) : (
             <Link
               href="/login"
-              className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+              className="hidden text-sm font-medium text-ink-soft transition-colors hover:text-ink lg:block"
             >
               Sign in
             </Link>
@@ -84,14 +84,12 @@ export async function SiteHeader() {
           <ButtonLink href={cta.href} size="sm" variant="green">
             {cta.label}
           </ButtonLink>
+          <NavMobile
+            links={NAV_LINKS}
+            isAuthed={Boolean(user)}
+            signOutAction={doSignOut}
+          />
         </div>
-
-        <NavMobile
-          links={NAV_LINKS}
-          isAuthed={Boolean(user)}
-          signOutAction={doSignOut}
-          cta={cta}
-        />
       </header>
     </div>
   );

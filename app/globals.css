@@ -267,8 +267,8 @@
   }
   .btn-sm {
     font-size: 0.85rem;
-    padding: 0.5rem 0.9rem;
-    min-height: 38px;
+    padding: 0.5rem 0.95rem;
+    min-height: 40px;
   }
 
   /* form field — soft focus ring, no hard offset */

@@ -4,16 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
-import { ButtonLink } from "@/components/ui/Button";
 
 type Props = {
   links: { href: string; label: string }[];
   isAuthed: boolean;
   signOutAction: () => Promise<void>;
-  cta: { href: string; label: string };
 };
 
-export function NavMobile({ links, isAuthed, signOutAction, cta }: Props) {
+export function NavMobile({ links, isAuthed, signOutAction }: Props) {
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -50,7 +48,7 @@ export function NavMobile({ links, isAuthed, signOutAction, cta }: Props) {
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label={open ? "Close menu" : "Open menu"}
-        className="tile size-10 bg-surface"
+        className="tile size-11 bg-surface"
       >
         <span className="relative block h-3.5 w-5">
           <span
@@ -99,25 +97,20 @@ export function NavMobile({ links, isAuthed, signOutAction, cta }: Props) {
             <Link
               href={isAuthed ? "/dashboard" : "/login"}
               onClick={close}
-              className="border-b border-rule py-3 font-display text-xl font-medium text-ink"
+              className="py-3 font-display text-xl font-medium text-ink"
             >
               {isAuthed ? "Dashboard" : "Sign in"}
             </Link>
-            <div className="mt-5 flex flex-col gap-3">
-              <ButtonLink href={cta.href} onClick={close} className="w-full">
-                {cta.label}
-              </ButtonLink>
-              {isAuthed && (
-                <form action={signOutAction}>
-                  <button
-                    type="submit"
-                    className="text-sm font-medium text-ink-soft"
-                  >
-                    Sign out
-                  </button>
-                </form>
-              )}
-            </div>
+            {isAuthed && (
+              <form action={signOutAction} className="border-t border-rule pt-4">
+                <button
+                  type="submit"
+                  className="text-sm font-medium text-ink-soft"
+                >
+                  Sign out
+                </button>
+              </form>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
