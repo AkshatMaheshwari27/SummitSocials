@@ -2,8 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
-import { Icon } from "@/components/ui/Icon";
-import { IconTile } from "@/components/ui/IconTile";
 import { auth, signIn } from "@/lib/auth";
 
 function safeCallbackUrl(value: string | undefined): string {
@@ -45,38 +43,37 @@ export default async function LoginPage({
   }
 
   return (
-    <div className="wrap flex min-h-[calc(100dvh-6rem)] items-center py-12">
-      <div className="mx-auto grid w-full max-w-4xl items-center gap-10 lg:grid-cols-2">
+    <div className="wrap flex min-h-[calc(100dvh-4rem)] items-center py-16">
+      <div className="mx-auto grid w-full max-w-4xl items-center gap-12 lg:grid-cols-2">
         <div className="hidden lg:block">
-          <IconTile icon="sparkle" tone="coral" size="lg" />
-          <h1 className="h-section mt-5 max-w-[14ch] text-balance">
-            Reserve your seat for Prompt to Product.
-          </h1>
-          <p className="lede mt-4 max-w-sm">
-            One account keeps your seat, your registration, and your dashboard in
-            one place.
+          <p className="font-mono text-xs uppercase tracking-[0.12em] text-green-ink">
+            Summit Socials
           </p>
-          <ul className="mt-6 space-y-2 text-sm font-semibold text-ink">
-            <li className="flex items-center gap-2">
-              <Icon name="check" className="size-4 text-green-ink" strokeWidth={3} />
-              No password to remember
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon name="check" className="size-4 text-green-ink" strokeWidth={3} />
-              Sign in with GitHub or Google
-            </li>
+          <p className="h-section mt-4 max-w-[16ch] text-balance">
+            Reserve your seat for Prompt to Product.
+          </p>
+          <p className="lede mt-4 max-w-sm">
+            One account holds your registration, your payment status, and your
+            dashboard &mdash; nothing else.
+          </p>
+          <ul className="mt-6 space-y-2 font-mono text-sm text-ink-soft">
+            <li>&middot; No password to remember</li>
+            <li>&middot; Google or GitHub, whichever you already use</li>
           </ul>
         </div>
 
         <Card className="p-7 sm:p-9">
-          <h2 className="h-section">Sign in</h2>
-          <p className="mt-2 text-ink-soft">Continue to reserve your seat.</p>
+          <h1 className="font-display text-2xl font-medium tracking-tight text-ink">
+            Sign in
+          </h1>
+          <p className="mt-1.5 text-sm text-ink-soft">
+            Continue to reserve your seat.
+          </p>
 
           {error && (
             <p
               role="alert"
-              className="mt-5 border-2 border-ink bg-danger-soft px-3 py-2.5 text-sm font-semibold text-danger"
-              style={{ borderRadius: "12px" }}
+              className="mt-5 rounded-md border border-danger bg-danger-soft px-3 py-2.5 text-sm font-medium text-danger"
             >
               We couldn&rsquo;t sign you in. Please try again.
             </p>
@@ -107,12 +104,15 @@ export default async function LoginPage({
             </form>
           </div>
 
-          <p className="mt-5 text-xs text-ink-faint">
-            We use GitHub or Google only to confirm who you are.
+          <p className="mt-5 font-mono text-xs text-ink-faint">
+            We use Google or GitHub only to confirm who you are.
           </p>
           <p className="mt-4 text-sm lg:hidden">
-            <Link href="/" className="font-bold text-green-ink underline-offset-2 hover:underline">
-              ← Back to the workshop
+            <Link
+              href="/"
+              className="text-green-ink underline-offset-2 hover:underline"
+            >
+              &larr; Back to the workshop
             </Link>
           </p>
         </Card>
