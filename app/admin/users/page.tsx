@@ -2,7 +2,6 @@ import type { RegistrationStatus } from "@prisma/client";
 
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
-import { Pill } from "@/components/ui/Pill";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { listRegistrations } from "@/lib/admin";
 
@@ -38,15 +37,17 @@ export default async function AdminUsersPage({
 
   return (
     <Container className="py-[var(--section-y)]">
-      <Pill tone="green">Event management</Pill>
-      <h1 className="h-section mt-4">All registrations</h1>
+      <p className="font-mono text-xs uppercase tracking-[0.12em] text-ink-faint">
+        Event management
+      </p>
+      <h1 className="h-section mt-3">All registrations</h1>
 
       <form method="get" className="mt-8 flex flex-wrap items-center gap-3">
         <div className="relative">
           <Icon
-            name="message"
+            name="search"
             className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint"
-            strokeWidth={2.25}
+            strokeWidth={2}
           />
           <input
             type="search"
@@ -69,10 +70,11 @@ export default async function AdminUsersPage({
                 value={opt}
                 aria-pressed={active}
                 className={
-                  "border-2 border-ink px-3 py-1.5 text-xs font-bold transition-transform active:translate-y-0.5 " +
-                  (active ? "bg-green text-white" : "bg-surface text-ink hover:bg-cream")
+                  "rounded-full border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.06em] transition-colors " +
+                  (active
+                    ? "border-green bg-green text-white"
+                    : "border-rule-strong bg-surface text-ink-soft hover:text-ink")
                 }
-                style={{ borderRadius: "999px" }}
               >
                 {opt.charAt(0) + opt.slice(1).toLowerCase()}
               </button>
@@ -81,31 +83,41 @@ export default async function AdminUsersPage({
         </div>
       </form>
 
-      <p className="mt-6 text-sm font-semibold text-ink-soft">
+      <p className="mt-6 font-mono text-xs text-ink-soft">
         {rows.length} {rows.length === 1 ? "registration" : "registrations"}
       </p>
 
-      <div className="mt-3 overflow-x-auto panel p-0">
+      <div className="mt-3 overflow-x-auto rounded-[var(--radius-lg)] border border-rule">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b-2 border-ink bg-cream text-left">
-              <th className="sticky left-0 bg-cream px-4 py-3 font-display font-bold text-ink">
+            <tr className="border-b border-rule bg-surface-2 text-left">
+              <th className="sticky left-0 bg-surface-2 px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
                 Name
               </th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Email</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Reference</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Registration</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Payment</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Placed</th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Email
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Reference
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Registration
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Payment
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Placed
+              </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
               <tr
                 key={r.id}
-                className="border-b-2 border-ink/10 last:border-0 hover:bg-cream"
+                className="border-b border-rule last:border-0 hover:bg-surface-2"
               >
-                <td className="sticky left-0 bg-surface px-4 py-3 font-semibold text-ink">
+                <td className="sticky left-0 bg-surface px-4 py-3 font-medium text-ink">
                   {r.fullName}
                 </td>
                 <td className="px-4 py-3 text-ink-soft">{r.email}</td>
@@ -118,7 +130,7 @@ export default async function AdminUsersPage({
                 <td className="px-4 py-3">
                   <StatusBadge status={r.paymentStatus} />
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-ink-soft">
+                <td className="whitespace-nowrap px-4 py-3 tabular-nums text-ink-soft">
                   {DATE_FMT.format(new Date(r.createdAt))}
                 </td>
               </tr>

@@ -17,7 +17,8 @@ export type IconName =
   | "plug"
   | "book"
   | "star"
-  | "bolt";
+  | "bolt"
+  | "search";
 
 const PATHS: Record<IconName, string> = {
   calendar:
@@ -41,6 +42,7 @@ const PATHS: Record<IconName, string> = {
   book: "M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Zm2 12h13M9 7h7",
   star: "M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.9L12 3.5Z",
   bolt: "M13 3 4 14h7l-1 7 9-11h-7l1-7Z",
+  search: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.35-4.35",
 };
 
 export function Icon({

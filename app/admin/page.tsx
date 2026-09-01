@@ -1,7 +1,6 @@
 import { AdminSummary } from "@/components/admin/AdminSummary";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { Pill } from "@/components/ui/Pill";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { getAdminOverview, listRegistrations } from "@/lib/admin";
 import { formatPrice, getCurrentWorkshop } from "@/lib/workshop";
@@ -29,8 +28,10 @@ export default async function AdminPage() {
     <Container className="py-[var(--section-y)]">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Pill tone="green">Event management</Pill>
-          <h1 className="h-section mt-4">Registrations</h1>
+          <p className="font-mono text-xs uppercase tracking-[0.12em] text-ink-faint">
+            Event management
+          </p>
+          <h1 className="h-section mt-3">Registrations</h1>
         </div>
         <ButtonLink href="/admin/users" variant="sky" size="sm">
           View all
@@ -42,34 +43,44 @@ export default async function AdminPage() {
           filled={overview.paid}
           capacity={overview.capacity}
           stats={[
-            { label: "Pending", value: String(overview.pending), icon: "clock", tone: "coral" },
-            { label: "Cancelled", value: String(overview.cancelled), icon: "tag", tone: "lavender" },
-            { label: "Revenue", value: revenue, icon: "check", tone: "green" },
+            { label: "Pending", value: String(overview.pending) },
+            { label: "Cancelled", value: String(overview.cancelled) },
+            { label: "Revenue", value: revenue },
           ]}
         />
       </div>
 
-      <h2 className="mt-12 font-display text-lg font-bold tracking-tight text-ink">
+      <h2 className="mt-14 font-display text-lg font-medium tracking-tight text-ink">
         Recent registrations
       </h2>
-      <div className="mt-4 overflow-x-auto panel p-0">
+      <div className="mt-4 overflow-x-auto rounded-[var(--radius-lg)] border border-rule">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b-2 border-ink bg-cream text-left">
-              <th className="px-4 py-3 font-display font-bold text-ink">Name</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Email</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Reference</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Payment</th>
-              <th className="px-4 py-3 font-display font-bold text-ink">Placed</th>
+            <tr className="border-b border-rule bg-surface-2 text-left">
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Name
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Email
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Reference
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Payment
+              </th>
+              <th className="px-4 py-3 font-mono text-[0.68rem] uppercase tracking-[0.06em] text-ink-soft">
+                Placed
+              </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
               <tr
                 key={r.id}
-                className="border-b-2 border-ink/10 last:border-0 hover:bg-cream"
+                className="border-b border-rule last:border-0 hover:bg-surface-2"
               >
-                <td className="px-4 py-3 font-semibold text-ink">{r.fullName}</td>
+                <td className="px-4 py-3 font-medium text-ink">{r.fullName}</td>
                 <td className="px-4 py-3 text-ink-soft">{r.email}</td>
                 <td className="px-4 py-3 font-mono text-xs text-ink-soft">
                   {r.ref}
@@ -77,14 +88,14 @@ export default async function AdminPage() {
                 <td className="px-4 py-3">
                   <StatusBadge status={r.paymentStatus} />
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-ink-soft">
+                <td className="whitespace-nowrap px-4 py-3 tabular-nums text-ink-soft">
                   {DATE_FMT.format(new Date(r.createdAt))}
                 </td>
               </tr>
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-ink-faint">
+                <td colSpan={5} className="px-4 py-10 text-center text-ink-faint">
                   No registrations yet.
                 </td>
               </tr>

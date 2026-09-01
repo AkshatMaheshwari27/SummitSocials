@@ -1,7 +1,4 @@
-import type { IconName } from "@/components/ui/Icon";
-import { IconTile } from "@/components/ui/IconTile";
-
-type Stat = { label: string; value: string; icon: IconName; tone: "green" | "sky" | "coral" | "lavender" };
+type Stat = { label: string; value: string };
 
 export function AdminSummary({
   filled,
@@ -18,18 +15,19 @@ export function AdminSummary({
       : 0;
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1.1fr_1.4fr]">
-      <div className="panel p-6">
-        <p className="text-sm font-bold text-ink-soft">Seats filled</p>
-        <p className="mt-1 font-display text-4xl font-bold tracking-tight text-ink">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="rounded-[var(--radius-lg)] border border-rule p-5">
+        <p className="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-ink-faint">
+          Seats filled
+        </p>
+        <p className="mt-1 font-display text-3xl font-medium tabular-nums tracking-tight text-ink">
           {filled}
           <span className="text-ink-faint">
             {capacity != null ? ` / ${capacity}` : ""}
           </span>
         </p>
         <div
-          className="mt-4 h-4 overflow-hidden border-2 border-ink bg-cream"
-          style={{ borderRadius: "999px" }}
+          className="mt-3 h-1.5 overflow-hidden rounded-full bg-rule"
           role="progressbar"
           aria-valuenow={pct}
           aria-valuemin={0}
@@ -40,19 +38,19 @@ export function AdminSummary({
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        {stats.map((s) => (
-          <div key={s.label} className="panel-soft flex flex-col gap-2 p-4">
-            <IconTile icon={s.icon} tone={s.tone} size="sm" />
-            <p className="font-display text-2xl font-bold tracking-tight text-ink">
-              {s.value}
-            </p>
-            <p className="text-xs font-bold uppercase tracking-wide text-ink-faint">
-              {s.label}
-            </p>
-          </div>
-        ))}
-      </div>
+      {stats.map((s) => (
+        <div
+          key={s.label}
+          className="rounded-[var(--radius-lg)] border border-rule p-5"
+        >
+          <p className="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-ink-faint">
+            {s.label}
+          </p>
+          <p className="mt-1 font-display text-3xl font-medium tabular-nums tracking-tight text-ink">
+            {s.value}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }
