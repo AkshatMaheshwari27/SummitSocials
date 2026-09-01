@@ -73,14 +73,12 @@ export default function RootLayout({
 }
 
 function SiteFooter() {
-  // NOTE (Phase 2): homepage section ids are renamed to #whats-on / #inside;
-  // update these hrefs alongside that change.
   const cols: { title: string; links: { label: string; href: string }[] }[] = [
     {
       title: "Event",
       links: [
-        { label: "What's on", href: "/#workshop" },
-        { label: "Inside the day", href: "/#schedule" },
+        { label: "What's on", href: "/#whats-on" },
+        { label: "Inside the day", href: "/#inside" },
         { label: "Reserve a seat", href: "/register" },
       ],
     },

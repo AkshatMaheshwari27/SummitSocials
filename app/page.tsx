@@ -5,9 +5,9 @@ import { FinalCta } from "@/components/workshop/FinalCta";
 import { Hero } from "@/components/workshop/Hero";
 import { LearnGrid, type LearnItem } from "@/components/workshop/LearnGrid";
 import { ScheduleTimeline } from "@/components/workshop/ScheduleTimeline";
-import { Testimonials } from "@/components/workshop/Testimonials";
 import { WorkshopHighlight } from "@/components/workshop/WorkshopHighlight";
 import { Section } from "@/components/ui/Section";
+import { getPrimaryCta } from "@/lib/cta";
 import { getSessionUser } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import {
@@ -19,6 +19,9 @@ import {
 /* Page-level content not modelled by the database. */
 const EVENT_TIME = "10:00 AM – 1:00 PM";
 const DURATION = "3 hours";
+
+const WHATS_ON_LEDE =
+  "You start from an empty file and leave with an AI-powered app running on a live URL — built by you, in one afternoon.";
 
 const LEARN: LearnItem[] = [
   {
@@ -91,13 +94,18 @@ export default async function HomePage() {
     getCurrentWorkshop(),
     getSessionUser(),
   ]);
-  const reserveHref = user ? "/register" : "/login?callbackUrl=/register";
+  const cta = await getPrimaryCta(user?.id);
 
   if (!workshop) {
     return (
-      <div className="wrap py-[var(--section-y)]">
-        <h1 className="h-display">Registration isn&rsquo;t open yet.</h1>
-        <p className="lede mt-4">The next workshop is being scheduled.</p>
+      <div className="wrap-prose py-[var(--section-y)]">
+        <p className="pill">Summit Socials</p>
+        <h1 className="h-display mt-6">The next event is being planned.</h1>
+        <p className="lede mt-4">
+          Summit Socials runs hands-on builder workshops through the year. This
+          page will carry the date, venue, and registration as soon as the next
+          one is scheduled.
+        </p>
       </div>
     );
   }
@@ -106,12 +114,12 @@ export default async function HomePage() {
     where: { workshopId: workshop.id, status: "PAID" },
   });
   const seatsLeft = Math.max(workshop.capacity - paidCount, 0);
-  const seatsLabel =
-    seatsLeft === 0
-      ? "This workshop is full"
-      : seatsLeft === workshop.capacity
-        ? `${workshop.capacity} seats available`
-        : `${seatsLeft} of ${workshop.capacity} seats left`;
+  const full = seatsLeft === 0;
+  const seatsLabel = full
+    ? "This workshop is full"
+    : seatsLeft === workshop.capacity
+      ? `${workshop.capacity} seats available`
+      : `${seatsLeft} of ${workshop.capacity} seats left`;
 
   const price = formatPrice(workshop.priceMinor, workshop.currency);
   const dateText = formatWorkshopDate(workshop.date);
@@ -125,101 +133,101 @@ export default async function HomePage() {
   return (
     <>
       <Hero
-        badge="Hands-on AI workshop"
-        titleLines={["Go from prompt", "to"]}
-        greenWord="product"
-        supporting="Turn an idea into a working AI-powered app in one hands-on workshop with Summit Socials. You leave with something that runs."
+        eyebrow="Hands-on AI workshop"
+        headline="Go from prompt to product"
+        tagline="Connecting builders, shipping tomorrow's tech."
+        intro="Turn an idea into a working AI-powered app in one hands-on workshop with Summit Socials. You leave with something that runs."
         facts={[
-          { icon: "calendar", label: dateShort },
-          { icon: "pin", label: "SRMIST" },
-          { icon: "clock", label: DURATION },
-          { icon: "tag", label: price },
+          { label: "Date", value: dateShort },
+          { label: "Venue", value: "SRMIST" },
+          { label: "Format", value: `In person · ${DURATION}` },
+          { label: "Fee", value: price },
         ]}
-        reserveHref={reserveHref}
-        seatsLeftLabel={seatsLabel}
+        cta={cta}
+        secondaryHref="/#whats-on"
+        secondaryLabel="Explore the workshop"
+        seatsLabel={seatsLabel}
       />
 
       <Section
-        id="workshop"
-        eyebrow="The workshop"
-        eyebrowTone="green"
+        id="whats-on"
+        eyebrow="What's on"
         title="One afternoon, one working app"
-        intro="A focused, practical session — you build the whole way through."
+        intro="A focused, practical session — you build the whole way through, from the first prompt to a deployed URL."
       >
         <WorkshopHighlight
           title={workshop.title}
+          lede={WHATS_ON_LEDE}
           description={workshop.description}
-          price={price}
-          seatsLabel={seatsLabel}
-          reserveHref={reserveHref}
-          meta={[
-            { icon: "clock", label: "Duration", value: `${DURATION} · ${EVENT_TIME}` },
-            { icon: "sparkle", label: "Level", value: "Beginner-friendly" },
-            { icon: "calendar", label: "Date", value: dateText },
-            { icon: "pin", label: "Location", value: workshop.location },
+          facts={[
+            { label: "Date", value: dateText },
+            { label: "Time", value: EVENT_TIME },
+            { label: "Venue", value: workshop.location },
+            { label: "Format", value: `In person · ${DURATION}` },
+            { label: "Level", value: "Beginner-friendly" },
           ]}
+          price={price}
+          cta={cta}
+          seatsLabel={seatsLabel}
+          full={full}
         />
       </Section>
 
       <Section
-        id="learn"
-        eyebrow="What you'll learn"
-        eyebrowTone="sky"
-        title="Six modules, start to finish"
-        intro="Each one builds on the last, so by the end the whole pipeline makes sense."
+        id="inside"
+        band
+        eyebrow="Inside the day"
+        title="How the three hours run"
+        intro="Six short modules, each building on the last, wrapped around a single project you carry from start to finish."
       >
-        <LearnGrid items={LEARN} />
+        <div className="grid gap-14 lg:grid-cols-[minmax(0,22rem)_1fr]">
+          <div>
+            <h3 className="font-display text-xl font-medium text-ink">
+              The schedule
+            </h3>
+            <div className="mt-5">
+              <ScheduleTimeline items={SCHEDULE} />
+            </div>
+          </div>
+          <div>
+            <h3 className="font-display text-xl font-medium text-ink">
+              The six modules
+            </h3>
+            <div className="mt-5">
+              <LearnGrid items={LEARN} />
+            </div>
+          </div>
+        </div>
       </Section>
 
       <Section
         id="build"
         eyebrow="What you'll build"
-        eyebrowTone="lavender"
         title="A small app that does something useful with a model"
-        intro="Not a toy — a real API call, a usable interface, and a deploy you can share."
+        intro="A real API call, a usable interface, and a deploy you can share. The panels below are an illustration of the shape of the project — not a real attendee's work."
       >
         <BuildShowcase />
       </Section>
 
       <Section
-        eyebrow="Why this workshop"
-        eyebrowTone="coral"
+        id="about"
+        eyebrow="Why Summit Socials"
         title="Everything you need to ship"
+        intro="Summit Socials runs practical, build-first sessions where developers ship real projects. This one gets you from prompt to product in an afternoon."
       >
         <FeatureGrid />
       </Section>
 
-      <Section
-        id="schedule"
-        eyebrow="The schedule"
-        eyebrowTone="green"
-        title="How the three hours run"
-      >
-        <ScheduleTimeline items={SCHEDULE} />
-      </Section>
-
-      <Section
-        id="who"
-        eyebrow="Who it's for"
-        eyebrowTone="sky"
-        title="Come as you are"
-      >
+      <Section id="who" eyebrow="Who it's for" title="Come as you are">
         <AudienceSplit forItems={AUDIENCE_FOR} notItems={AUDIENCE_NOT} />
       </Section>
 
-      <Section
-        id="club"
-        eyebrow="Student stories"
-        eyebrowTone="green"
-        title="What people say"
-        intro="Summit Socials runs practical, build-first sessions where developers ship real projects."
-      >
-        <Testimonials />
-      </Section>
-
       <FinalCta
+        headline="Bring an idea. Leave with it running."
         price={price}
-        reserveHref={reserveHref}
+        capacity={workshop.capacity}
+        cta={cta}
+        secondaryHref="/#inside"
         seatsLabel={seatsLabel}
       />
     </>

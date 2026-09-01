@@ -3,12 +3,11 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { NavMobile } from "@/components/navigation/NavMobile";
 import { auth, signOut } from "@/lib/auth";
-import { getMyRegistration } from "@/lib/registration";
+import { getPrimaryCta } from "@/lib/cta";
 
-// NOTE (Phase 2): homepage section ids become #whats-on / #about; update hrefs then.
 const NAV_LINKS = [
-  { href: "/#workshop", label: "What's on" },
-  { href: "/#club", label: "About" },
+  { href: "/#whats-on", label: "What's on" },
+  { href: "/#about", label: "About" },
 ];
 
 function Logo() {
@@ -27,24 +26,10 @@ function Logo() {
   );
 }
 
-type Cta = { href: string; label: string };
-
 export async function SiteHeader() {
   const session = await auth();
   const user = session?.user;
-
-  let cta: Cta = {
-    href: user ? "/register" : "/login?callbackUrl=/register",
-    label: "Reserve a seat",
-  };
-  if (user) {
-    const { registration } = await getMyRegistration(user.id);
-    if (registration?.status === "PENDING") {
-      cta = { href: "/checkout", label: "Complete payment" };
-    } else if (registration?.status === "PAID") {
-      cta = { href: "/dashboard", label: "You're going" };
-    }
-  }
+  const cta = await getPrimaryCta(user?.id);
 
   async function doSignOut() {
     "use server";

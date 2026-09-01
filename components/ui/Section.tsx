@@ -1,14 +1,10 @@
 import type { ReactNode } from "react";
 
-import { Pill } from "@/components/ui/Pill";
 import { Reveal } from "@/lib/motion";
-
-type PillTone = "green" | "sky" | "coral" | "lavender";
 
 export function Section({
   id,
   eyebrow,
-  eyebrowTone = "green",
   title,
   intro,
   band = false,
@@ -16,36 +12,39 @@ export function Section({
 }: {
   id?: string;
   eyebrow?: string;
-  eyebrowTone?: PillTone;
   title?: string;
   intro?: string;
   band?: boolean;
   children: ReactNode;
 }) {
+  const hasHeader = Boolean(eyebrow || title || intro);
+
   return (
     <section
       id={id}
       aria-labelledby={title && id ? `${id}-title` : undefined}
-      className={band ? "bg-sky" : "bg-cream"}
+      className={band ? "border-y border-rule bg-sky-soft" : "bg-cream"}
     >
       <div className="wrap py-[var(--section-y)]">
-        {(eyebrow || title || intro) && (
-          <Reveal className="mx-auto max-w-2xl text-center">
-            {eyebrow && <Pill tone={eyebrowTone}>{eyebrow}</Pill>}
+        {hasHeader && (
+          <Reveal className="max-w-2xl">
+            {eyebrow && (
+              <p className="font-mono text-xs uppercase tracking-[0.12em] text-green-ink">
+                {eyebrow}
+              </p>
+            )}
             {title && (
               <h2
                 id={id ? `${id}-title` : undefined}
-                className="h-section mt-4 text-balance"
+                className="h-section mt-3 text-balance"
               >
                 {title}
               </h2>
             )}
-            {intro && <p className="lede mt-3">{intro}</p>}
+            {intro && <p className="lede mt-4">{intro}</p>}
           </Reveal>
         )}
-        <div className={eyebrow || title || intro ? "mt-12" : ""}>
-          {children}
-        </div>
+        <div className={hasHeader ? "mt-12" : ""}>{children}</div>
       </div>
     </section>
   );

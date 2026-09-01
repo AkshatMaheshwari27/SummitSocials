@@ -2,46 +2,43 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/lib/motion";
 
+type Cta = { href: string; label: string };
+
 export function FinalCta({
+  headline,
   price,
-  reserveHref,
+  capacity,
+  cta,
+  secondaryHref,
   seatsLabel,
 }: {
+  headline: string;
   price: string;
-  reserveHref: string;
+  capacity: number;
+  cta: Cta;
+  secondaryHref: string;
   seatsLabel: string;
 }) {
   return (
-    <section className="bg-sky">
+    <section className="border-t border-rule bg-sky-soft">
       <div className="wrap py-[var(--section-y)]">
         <Reveal>
-          <div className="panel mx-auto max-w-2xl p-8 text-center sm:p-12">
-            <h2 className="h-section text-balance">
-              Ready to build with AI?
-            </h2>
-            <p className="lede mx-auto mt-3 max-w-md">
-              One afternoon, one working app. Bring a laptop and an idea.
+          <div className="max-w-2xl">
+            <h2 className="h-section text-balance">{headline}</h2>
+            <p className="lede mt-4">
+              {capacity} seats, {price}, and a live URL by the time you leave.
             </p>
-            <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              <ButtonLink href={reserveHref} size="lg" variant="green">
-                Reserve your seat — {price}
-                <Icon name="arrow-right" className="size-4" strokeWidth={2.5} />
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <ButtonLink href={cta.href} size="lg" variant="green">
+                {cta.label} — {price}
+                <Icon name="arrow-right" className="size-4" strokeWidth={2.25} />
               </ButtonLink>
-              <ButtonLink href="/#schedule" size="lg" variant="white">
+              <ButtonLink href={secondaryHref} size="lg" variant="sky">
                 See the schedule
               </ButtonLink>
             </div>
-            <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-bold text-ink">
-              <span className="flex items-center gap-1.5">
-                <Icon name="check" className="size-4 text-green-ink" strokeWidth={3} />
-                Beginner-friendly
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check" className="size-4 text-green-ink" strokeWidth={3} />
-                Leave with a working app
-              </span>
-            </div>
-            <p className="mt-4 text-sm font-bold text-ink-soft">{seatsLabel}</p>
+            <p className="meta mt-4">{seatsLabel}</p>
           </div>
         </Reveal>
       </div>

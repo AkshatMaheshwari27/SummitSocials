@@ -1,89 +1,67 @@
 import { ButtonLink } from "@/components/ui/Button";
-import { Icon, type IconName } from "@/components/ui/Icon";
-import { Pill } from "@/components/ui/Pill";
-import { HeroArt } from "@/components/workshop/HeroArt";
-import { HeroReveal } from "@/components/workshop/HeroReveal";
+import { Icon } from "@/components/ui/Icon";
 
-type Fact = { icon: IconName; label: string };
+type Fact = { label: string; value: string };
+type Cta = { href: string; label: string };
 
 export function Hero({
-  badge,
-  titleLines,
-  greenWord,
-  supporting,
+  eyebrow,
+  headline,
+  tagline,
+  intro,
   facts,
-  reserveHref,
-  seatsLeftLabel,
+  cta,
+  secondaryHref,
+  secondaryLabel,
+  seatsLabel,
 }: {
-  badge: string;
-  titleLines: string[];
-  greenWord: string;
-  supporting: string;
+  eyebrow: string;
+  headline: string;
+  tagline: string;
+  intro: string;
   facts: Fact[];
-  reserveHref: string;
-  seatsLeftLabel: string;
+  cta: Cta;
+  secondaryHref: string;
+  secondaryLabel: string;
+  seatsLabel: string;
 }) {
   return (
     <section className="bg-cream">
-      <div className="wrap grid items-center gap-12 pb-[var(--section-y)] pt-12 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr]">
-        <HeroReveal>
-          <Pill tone="green">
-            <span
-              aria-hidden
-              className="size-1.5 rounded-full bg-green-ink"
-            />
-            {badge}
-          </Pill>
+      <div className="wrap pb-[var(--section-y)] pt-16 sm:pt-24">
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-green-ink">
+          {eyebrow}
+        </p>
 
-          <h1 className="h-display mt-5">
-            {titleLines.map((line, i) => (
-              <span key={line} className="block">
-                {line}
-                {i === titleLines.length - 1 && (
-                  <>
-                    {" "}
-                    <span className="text-green-ink">{greenWord}</span>
-                  </>
-                )}
-              </span>
-            ))}
-          </h1>
+        <h1 className="mt-6 max-w-[16ch] text-balance font-display font-medium leading-[1.02] tracking-[-0.02em] text-ink text-[clamp(2.75rem,7vw,5rem)]">
+          {headline}
+        </h1>
 
-          <p className="lede mt-5 max-w-xl">{supporting}</p>
+        <p className="mt-6 max-w-xl font-display text-xl italic text-ink-soft">
+          {tagline}
+        </p>
+        <p className="lede mt-4 max-w-xl">{intro}</p>
 
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <ButtonLink href={reserveHref} size="lg" variant="green">
-              Reserve your seat
-              <Icon name="arrow-right" className="size-4" strokeWidth={2.5} />
-            </ButtonLink>
-            <ButtonLink href="/#workshop" size="lg" variant="sky">
-              Explore the workshop
-            </ButtonLink>
-          </div>
+        <div className="mt-9 flex flex-wrap items-center gap-3">
+          <ButtonLink href={cta.href} size="lg" variant="green">
+            {cta.label}
+            <Icon name="arrow-right" className="size-4" strokeWidth={2.25} />
+          </ButtonLink>
+          <ButtonLink href={secondaryHref} size="lg" variant="sky">
+            {secondaryLabel}
+          </ButtonLink>
+        </div>
+        <p className="meta mt-4">{seatsLabel}</p>
 
-          <p className="mt-3 text-sm font-bold text-ink-soft">
-            {seatsLeftLabel}
-          </p>
-
-          <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-4">
-            {facts.map((f) => (
-              <div key={f.label} className="flex items-center gap-2">
-                <span className="tile size-8 bg-lavender-soft">
-                  <Icon name={f.icon} className="size-4 text-ink" strokeWidth={2.25} />
-                </span>
-                <dd className="font-display text-sm font-bold text-ink">
-                  {f.label}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </HeroReveal>
-
-        <HeroReveal>
-          <div className="mx-auto max-w-md lg:ml-auto lg:mr-0">
-            <HeroArt />
-          </div>
-        </HeroReveal>
+        <dl className="mt-14 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-rule pt-8 sm:grid-cols-4">
+          {facts.map((f) => (
+            <div key={f.label}>
+              <dt className="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-ink-faint">
+                {f.label}
+              </dt>
+              <dd className="mt-1 font-display text-lg text-ink">{f.value}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );
