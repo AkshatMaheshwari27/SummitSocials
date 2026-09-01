@@ -76,6 +76,8 @@ export function NavMobile({ links, isAuthed, signOutAction }: Props) {
         {open && (
           <motion.div
             id="mobile-menu"
+            role="navigation"
+            aria-label="Menu"
             className="fixed inset-x-3 top-20 z-50 flex flex-col border border-rule-strong bg-surface p-5 shadow-[var(--sh-lg)]"
             style={{ borderRadius: "14px" }}
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}

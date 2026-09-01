@@ -20,7 +20,7 @@
   /* ---- ink (text) ---- */
   --color-ink: #191f28;
   --color-ink-soft: #566173;
-  --color-ink-faint: #8a93a2;
+  --color-ink-faint: #646b77; /* AA 4.5:1 on cream / surface / surface-2 */
 
   /* ---- rules / borders ---- */
   --color-rule: #d8dde3;
@@ -276,7 +276,8 @@
     width: 100%;
     background-color: var(--color-surface);
     color: var(--color-ink);
-    border: 1px solid var(--color-rule-strong);
+    /* darker than --rule-strong so the field boundary meets WCAG 1.4.11 (3:1) */
+    border: 1px solid #8b93a0;
     border-radius: var(--radius-md);
     padding: 0.7rem 0.85rem;
     font-size: 16px;
