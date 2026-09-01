@@ -31,7 +31,12 @@ const SITE_DESCRIPTION =
   "Summit Socials runs Prompt to Product — a hands-on workshop where you go from an idea to a working AI-powered app in one afternoon.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000"),
+  ),
   title: "Summit Socials — Prompt to Product",
   description: SITE_DESCRIPTION,
   openGraph: {
