@@ -52,16 +52,11 @@ export default async function DashboardPage() {
             reference={formatRegistrationRef(registration.id)}
             rows={[
               {
-                icon: "calendar",
                 label: "Date",
                 value: formatWorkshopDate(registration.workshop.date),
               },
-              { icon: "clock", label: "Time", value: EVENT_TIME },
-              {
-                icon: "pin",
-                label: "Where",
-                value: registration.workshop.location,
-              },
+              { label: "Time", value: EVENT_TIME },
+              { label: "Where", value: registration.workshop.location },
             ]}
             registrationStatus={registration.status}
             paymentStatus={registration.payment?.status ?? undefined}

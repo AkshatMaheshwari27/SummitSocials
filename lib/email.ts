@@ -115,59 +115,60 @@ type EmailFields = {
 function buildText(f: EmailFields): string {
   return [
     "SUMMIT SOCIALS",
-    "",
     "REGISTRATION CONFIRMED",
     "",
     `Hi ${f.name},`,
     "",
-    "Your place at Prompt to Product is confirmed.",
+    "Your place at Prompt to Product is confirmed. Keep this email for your records.",
     "",
-    `WORKSHOP     ${f.workshop}`,
-    `DATE         ${f.date}`,
-    `LOCATION     ${f.location}`,
-    `REGISTRATION ${f.ref}`,
-    "PAYMENT      Paid",
+    `WORKSHOP      ${f.workshop}`,
+    `DATE          ${f.date}`,
+    `LOCATION      ${f.location}`,
+    `REGISTRATION  ${f.ref}`,
+    `PAYMENT       Paid`,
     "",
     "See you there.",
+    "",
+    "—",
+    "Summit Socials",
+    "Connecting builders, shipping tomorrow's tech.",
   ].join("\n");
 }
 
 function buildHtml(f: EmailFields): string {
   const sans =
     "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+  const serif = "Georgia,'Times New Roman',serif";
+  const mono = "'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace";
+
   const row = (label: string, value: string) => `
     <tr>
-      <td style="padding:10px 0;font:12px/1.4 ${sans};letter-spacing:0.06em;color:#7a879e;text-transform:uppercase;width:130px;vertical-align:top;">${label}</td>
-      <td style="padding:10px 0;font:16px/1.5 ${sans};color:#0e1526;">${value}</td>
+      <td style="padding:11px 0;border-top:1px solid #e2e6ea;font:11px/1.4 ${mono};letter-spacing:0.08em;color:#8a93a2;text-transform:uppercase;width:132px;vertical-align:top;">${label}</td>
+      <td style="padding:11px 0;border-top:1px solid #e2e6ea;font:15px/1.5 ${sans};color:#191f28;">${value}</td>
     </tr>`;
 
   return `<!doctype html>
 <html lang="en">
-<body style="margin:0;padding:0;background:#f6f8fc;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f8fc;padding:40px 16px;">
+<body style="margin:0;padding:0;background:#f4f5f7;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f7;padding:40px 16px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #e4e9f2;border-radius:12px;">
+        <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #d8dde3;border-radius:8px;">
           <tr>
-            <td style="padding:32px 32px 0;font:13px/1 ${sans};font-weight:600;letter-spacing:0.12em;color:#0b6fe0;text-transform:uppercase;">Summit Socials</td>
+            <td style="padding:32px 32px 0;font:500 20px/1.2 ${serif};color:#191f28;">Summit Socials</td>
           </tr>
           <tr>
-            <td style="padding:16px 32px 0;font:700 26px/1.2 ${sans};color:#0e1526;">Registration confirmed</td>
+            <td style="padding:14px 32px 0;font:11px/1 ${mono};font-weight:500;letter-spacing:0.12em;color:#8a93a2;text-transform:uppercase;">Registration confirmed</td>
           </tr>
           <tr>
-            <td style="padding:12px 32px 0;">
-              <div style="height:3px;width:44px;background:#0b6fe0;border-radius:999px;"></div>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:20px 32px 0;font:16px/1.6 ${sans};color:#4a5771;">
+            <td style="padding:18px 32px 0;font:15px/1.6 ${sans};color:#566173;">
               Hi ${f.name},<br /><br />
               Your place at Prompt to Product is confirmed. Keep this email for your records.
             </td>
           </tr>
           <tr>
-            <td style="padding:20px 32px 8px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e4e9f2;">
+            <td style="padding:22px 32px 6px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 ${row("Workshop", f.workshop)}
                 ${row("Date", f.date)}
                 ${row("Location", f.location)}
@@ -177,8 +178,15 @@ function buildHtml(f: EmailFields): string {
             </td>
           </tr>
           <tr>
-            <td style="padding:8px 32px 36px;font:14px/1.6 ${sans};color:#7a879e;">
+            <td style="padding:16px 32px 32px;font:14px/1.6 ${sans};color:#8a93a2;">
               See you there.
+            </td>
+          </tr>
+        </table>
+        <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;">
+          <tr>
+            <td style="padding:16px 32px 0;font:12px/1.5 ${sans};color:#8a93a2;">
+              Summit Socials &middot; Connecting builders, shipping tomorrow&rsquo;s tech.
             </td>
           </tr>
         </table>

@@ -44,7 +44,7 @@ export function CheckoutButton({ amountLabel }: { amountLabel: string }) {
         {pending ? "Redirecting to Stripe…" : `Pay ${amountLabel}`}
       </Button>
       {error && (
-        <p role="alert" className="text-sm font-semibold text-danger">
+        <p role="alert" className="text-sm font-medium text-danger">
           {error}
         </p>
       )}

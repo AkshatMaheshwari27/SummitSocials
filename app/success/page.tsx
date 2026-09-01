@@ -4,7 +4,6 @@ import { RegistrationCard } from "@/components/registration/RegistrationCard";
 import { SuccessReveal } from "@/components/success/SuccessReveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { IconTile } from "@/components/ui/IconTile";
 import { requireUser } from "@/lib/permissions";
 import { getMyRegistration } from "@/lib/registration";
 import { formatRegistrationRef, formatWorkshopDate } from "@/lib/workshop";
@@ -31,14 +30,14 @@ export default async function SuccessPage() {
   if (!paid) {
     return (
       <Container className="py-[var(--section-y)]">
-        <div className="mx-auto max-w-lg text-center">
-          <div className="flex justify-center">
-            <IconTile icon="clock" tone="coral" size="lg" />
-          </div>
-          <h1 className="h-section mt-5">Payment received</h1>
+        <div className="mx-auto max-w-md">
+          <p className="font-mono text-xs uppercase tracking-[0.12em] text-ink-faint">
+            Payment processing
+          </p>
+          <h1 className="h-section mt-3">We&rsquo;re confirming your payment</h1>
           <p className="lede mt-3">
-            We&rsquo;re confirming your payment with Stripe. This page shows your
-            real status from our records — refresh in a moment.
+            This page shows your real status from our records, not the Stripe
+            redirect. Give it a moment and refresh.
           </p>
           <div className="mt-8">
             <ButtonLink href="/dashboard" variant="sky">
@@ -53,33 +52,33 @@ export default async function SuccessPage() {
   return (
     <Container className="py-[var(--section-y)]">
       <SuccessReveal>
-        <div className="text-center">
-          <div className="flex justify-center">
-            <IconTile icon="check" tone="green" size="lg" />
-          </div>
-          <h1 className="h-section mt-5">You&rsquo;re in!</h1>
-          <p className="lede mx-auto mt-3 max-w-md">
+        <div className="max-w-md">
+          <p className="font-mono text-xs uppercase tracking-[0.12em] text-green-ink">
+            Registration confirmed
+          </p>
+          <h1 className="h-section mt-3">You&rsquo;re in.</h1>
+          <p className="lede mt-3">
             Your seat is confirmed. We&rsquo;ve emailed a copy to{" "}
             {registration.email}.
           </p>
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10">
           <RegistrationCard
             org={ORG}
             workshopTitle={w.title}
             reference={formatRegistrationRef(registration.id)}
             rows={[
-              { icon: "calendar", label: "Date", value: formatWorkshopDate(w.date) },
-              { icon: "clock", label: "Time", value: EVENT_TIME },
-              { icon: "pin", label: "Where", value: w.location },
+              { label: "Date", value: formatWorkshopDate(w.date) },
+              { label: "Time", value: EVENT_TIME },
+              { label: "Where", value: w.location },
             ]}
             registrationStatus={registration.status}
             paymentStatus={registration.payment?.status ?? undefined}
           />
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10">
           <ButtonLink href="/dashboard" variant="green">
             Go to my dashboard
           </ButtonLink>
