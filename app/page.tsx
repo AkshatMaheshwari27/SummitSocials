@@ -1,13 +1,14 @@
 import { AudienceSplit } from "@/components/workshop/AudienceSplit";
 import { BuildShowcase } from "@/components/workshop/BuildShowcase";
+import { EventCard } from "@/components/workshop/EventCard";
 import { FeatureGrid } from "@/components/workshop/FeatureGrid";
 import { FinalCta } from "@/components/workshop/FinalCta";
 import { Hero } from "@/components/workshop/Hero";
 import { LearnGrid, type LearnItem } from "@/components/workshop/LearnGrid";
 import { ScheduleTimeline } from "@/components/workshop/ScheduleTimeline";
-import { WorkshopHighlight } from "@/components/workshop/WorkshopHighlight";
 import { Section } from "@/components/ui/Section";
 import { getPrimaryCta } from "@/lib/cta";
+import { getEventAvailability } from "@/lib/event";
 import { getSessionUser } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import {
@@ -113,21 +114,29 @@ export default async function HomePage() {
   const paidCount = await prisma.registration.count({
     where: { workshopId: workshop.id, status: "PAID" },
   });
-  const seatsLeft = Math.max(workshop.capacity - paidCount, 0);
-  const full = seatsLeft === 0;
-  const seatsLabel = full
-    ? "This workshop is full"
-    : seatsLeft === workshop.capacity
-      ? `${workshop.capacity} seats available`
-      : `${seatsLeft} of ${workshop.capacity} seats left`;
+  const availability = getEventAvailability(workshop.capacity, paidCount);
 
   const price = formatPrice(workshop.priceMinor, workshop.currency);
   const dateText = formatWorkshopDate(workshop.date);
+  const IST = "Asia/Kolkata";
   const dateShort = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
-    timeZone: "Asia/Kolkata",
+    timeZone: IST,
+  }).format(workshop.date);
+  const day = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    timeZone: IST,
+  }).format(workshop.date);
+  const monthYear = new Intl.DateTimeFormat("en-GB", {
+    month: "short",
+    year: "numeric",
+    timeZone: IST,
+  }).format(workshop.date);
+  const weekday = new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    timeZone: IST,
   }).format(workshop.date);
 
   return (
@@ -146,7 +155,8 @@ export default async function HomePage() {
         cta={cta}
         secondaryHref="/#whats-on"
         secondaryLabel="Explore the workshop"
-        seatsLabel={seatsLabel}
+        seatsLabel={availability.label}
+        seatsFilling={availability.filling}
       />
 
       <Section
@@ -155,21 +165,47 @@ export default async function HomePage() {
         title="One afternoon, one working app"
         intro="A focused, practical session — you build the whole way through, from the first prompt to a deployed URL."
       >
-        <WorkshopHighlight
+        <EventCard
           title={workshop.title}
-          lede={WHATS_ON_LEDE}
-          description={workshop.description}
-          facts={[
-            { label: "Date", value: dateText },
-            { label: "Time", value: EVENT_TIME },
-            { label: "Venue", value: workshop.location },
-            { label: "Format", value: `In person · ${DURATION}` },
-            { label: "Level", value: "Beginner-friendly" },
-          ]}
+          summary={WHATS_ON_LEDE}
+          day={day}
+          monthYear={monthYear}
+          weekday={weekday}
+          venue={workshop.location}
           price={price}
+          availabilityLabel={availability.label}
+          filling={availability.filling}
+          full={availability.full}
+          registrationStatus={cta.registrationStatus}
+          reference={cta.reference}
           cta={cta}
-          seatsLabel={seatsLabel}
-          full={full}
+          detail={
+            <div className="grid gap-6 sm:grid-cols-[1fr_auto] sm:items-start">
+              <p className="max-w-prose leading-relaxed text-ink-soft">
+                {workshop.description}
+              </p>
+              <dl className="grid gap-2 text-sm sm:text-right">
+                <div>
+                  <dt className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-ink-faint">
+                    Date
+                  </dt>
+                  <dd className="text-ink">{dateText}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-ink-faint">
+                    Time
+                  </dt>
+                  <dd className="text-ink">{EVENT_TIME}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-ink-faint">
+                    Level
+                  </dt>
+                  <dd className="text-ink">Beginner-friendly</dd>
+                </div>
+              </dl>
+            </div>
+          }
         />
       </Section>
 
@@ -228,7 +264,8 @@ export default async function HomePage() {
         capacity={workshop.capacity}
         cta={cta}
         secondaryHref="/#inside"
-        seatsLabel={seatsLabel}
+        seatsLabel={availability.label}
+        seatsFilling={availability.filling}
       />
     </>
   );

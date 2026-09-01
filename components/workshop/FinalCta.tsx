@@ -11,6 +11,7 @@ export function FinalCta({
   cta,
   secondaryHref,
   seatsLabel,
+  seatsFilling = false,
 }: {
   headline: string;
   price: string;
@@ -18,6 +19,7 @@ export function FinalCta({
   cta: Cta;
   secondaryHref: string;
   seatsLabel: string;
+  seatsFilling?: boolean;
 }) {
   return (
     <section className="border-t border-rule bg-sky-soft">
@@ -38,7 +40,9 @@ export function FinalCta({
                 See the schedule
               </ButtonLink>
             </div>
-            <p className="meta mt-4">{seatsLabel}</p>
+            <p className={"mt-4 font-mono text-[0.82rem] " + (seatsFilling ? "text-warn" : "text-ink-soft")}>
+              {seatsLabel}
+            </p>
           </div>
         </Reveal>
       </div>

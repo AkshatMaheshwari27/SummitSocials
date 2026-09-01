@@ -14,6 +14,7 @@ export function Hero({
   secondaryHref,
   secondaryLabel,
   seatsLabel,
+  seatsFilling = false,
 }: {
   eyebrow: string;
   headline: string;
@@ -24,6 +25,7 @@ export function Hero({
   secondaryHref: string;
   secondaryLabel: string;
   seatsLabel: string;
+  seatsFilling?: boolean;
 }) {
   return (
     <section className="bg-cream">
@@ -50,7 +52,9 @@ export function Hero({
             {secondaryLabel}
           </ButtonLink>
         </div>
-        <p className="meta mt-4">{seatsLabel}</p>
+        <p className={"mt-4 font-mono text-[0.82rem] " + (seatsFilling ? "text-warn" : "text-ink-soft")}>
+          {seatsLabel}
+        </p>
 
         <dl className="mt-14 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-rule pt-8 sm:grid-cols-4">
           {facts.map((f) => (
