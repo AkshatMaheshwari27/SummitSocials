@@ -1,1694 +1,237 @@
-# Summit Socials — Event Platform
-
-A production-style paid workshop registration platform built with Next.js, PostgreSQL, OAuth, Stripe Checkout, and email confirmation.
-
-**Live Demo:** https://summit-socials.vercel.app/
-
-The project demonstrates a complete real-world registration flow:
-
-**OAuth login → workshop registration → Stripe payment → verified webhook → confirmation email → user dashboard**
-
-It also includes a protected admin area for viewing registered users.
-
----
-
-# 1. Project Overview
-
-Summit Socials is a paid workshop registration platform designed around a real event rather than a generic SaaS product.
-
-The application allows users to:
-
-- Sign in using Google or GitHub
-- View workshop information
-- Register for the workshop
-- Pay securely using Stripe Checkout TEST MODE
-- View their registration and payment status
-- Receive a confirmation email after successful payment
-
-Administrators can:
-
-- Access a protected admin dashboard
-- View registered users
-- View registration information
-- View payment status
-- Search and filter registrations
-
----
-
-# 2. Assignment Requirements
-
-This project satisfies the following requirements.
-
-## Required
-
-### OAuth Authentication
-
-Users can log in without creating a password using:
-
-- Google
-- GitHub
-
-### Paid Registration
-
-Users can register for a paid workshop.
-
-### Stripe Payment
-
-The application uses:
-
-- Stripe Checkout
-- Stripe TEST MODE
-- Server-side Checkout Session creation
-- Stripe webhook verification
-
-### Backend Security
-
-Backend/API routes are protected using server-side authentication and authorization.
-
-### Roles
-
-The application supports:
-
-```text
-USER
-ADMIN
-```
-
-Only administrators can access the registered-user list.
-
-### Deployment
-
-The application is designed for deployment using:
-
-```text
-Vercel
-```
-
----
-
-# 3. Bonus Requirement
-
-After successful payment, the application sends a professional confirmation email to the registered user.
-
-Email delivery uses:
-
-```text
-Resend
-```
-
-The email is sent only after the Stripe payment has been verified through the webhook.
-
----
-
-# 4. Technology Stack
-
-| Technology | Purpose |
-|---|---|
-| Next.js | Full-stack React application |
-| TypeScript | Type-safe development |
-| Tailwind CSS | Styling |
-| Motion | Frontend animation |
-| PostgreSQL | Database |
-| Prisma | Database ORM |
-| Auth.js | Authentication |
-| Google OAuth | Login provider |
-| GitHub OAuth | Login provider |
-| Stripe Checkout | Payments |
-| Resend | Confirmation email |
-| Vercel | Deployment |
-| GitHub | Source control |
-
----
-
-# 5. Design Philosophy
-
-The application intentionally avoids the typical AI-generated SaaS aesthetic.
-
-The visual identity is called:
-
 # Summit Socials
 
-The design direction is inspired by:
+> Connecting builders, shipping tomorrow's tech.
 
-- editorial design
-- independent workshop studios
-- contemporary event publications
-- premium print layouts
-- modern typography
-- physical event materials
-
-The interface should feel like an actual event brand rather than a software template.
+**Live demo:** https://summit-socials.vercel.app/
 
 ---
 
-# 6. Visual Language
+## Overview
 
-## Background
+Summit Socials is a full-stack event platform built around a single flagship
+workshop, **Prompt to Product**. It covers the whole attendee journey —
+discovering the event, signing in, registering, paying, and tracking status on a
+personal dashboard — alongside a protected area where an organiser reviews
+registrations.
 
-Warm off-white / paper-like neutral.
-
-## Primary Text
-
-Near-black.
-
-## Accent
-
-Burnt orange / vermillion.
-
-## Secondary Accent
-
-Muted olive.
-
-## Typography
-
-Use a deliberate combination of:
-
-- editorial serif typography for major headings
-- modern sans-serif for interface elements
-- monospace typography for metadata
-
-Example:
-
-```text
-SUMMIT SOCIALS
-
-A WORKSHOP IN
-MAKING THINGS
-THAT LAST.
-
-12 OCTOBER 2026
-BENGALURU
-48 SEATS
-```
+The application is a realistic implementation of a paid-event flow: OAuth
+authentication, a server-validated registration, a Stripe Checkout payment in
+**Test Mode**, a signature-verified webhook that is the single source of truth
+for payment status, an automated confirmation email, and role-based access to
+the admin surface.
 
 ---
 
-# 7. Design Rules
+## Key Features
 
-Avoid excessive use of:
-
-- rounded cards
-- gradient backgrounds
-- purple/blue SaaS gradients
-- glassmorphism
-- glowing containers
-- generic dashboard layouts
-- stock corporate photography
-- unnecessary decorative elements
-- repetitive three-card sections
-
-Prefer:
-
-- editorial layouts
-- asymmetric grids
-- large typography
-- thin borders
-- horizontal rules
-- generous whitespace
-- numbered sections
-- image-led layouts
-- strong hierarchy
-- restrained animation
-
-Uniqueness should come from composition and typography rather than excessive visual effects.
+- **Google OAuth login** and **GitHub OAuth login** via Auth.js (no passwords).
+- **Secure authenticated registration** — the registration form is validated on
+  the client for UX and again on the server as the real boundary.
+- **Paid workshop registration** with the price resolved server-side from the
+  database (the browser never supplies an amount).
+- **Stripe Checkout in Test Mode** — Checkout Sessions are created server-side.
+- **Webhook-based payment confirmation** — a Stripe webhook verifies the event
+  signature and idempotently marks the registration and payment as paid;
+  reaching the success page is never treated as proof of payment.
+- **Automated confirmation email** via Resend, sent once after a verified
+  payment (idempotent across webhook retries).
+- **User dashboard** showing the current registration, payment status, a
+  reference code, and an "add to calendar" file.
+- **Admin-only registered-user management** — an overview with seat and revenue
+  figures plus a searchable, filterable registrations table.
+- **Responsive, editorial frontend** designed from ~360px up to wide desktop.
+- **Accessibility support** — semantic landmarks, keyboard navigation, visible
+  focus states, labelled form errors, and WCAG AA text contrast.
 
 ---
 
-# 8. Motion
+## Tech Stack
 
-The frontend uses the current Motion React package.
-
-Install:
-
-```bash
-npm install motion
-```
-
-Example import:
-
-```tsx
-import { motion } from "motion/react";
-```
-
-Motion is used for:
-
-- page entrance
-- section reveals
-- hover interactions
-- navigation transitions
-- image movement
-- subtle scroll interactions
-- staggered typography
-
-Animations should remain restrained.
-
-The application should never feel like every element is moving.
-
-Reduced-motion preferences should be respected.
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js (App Router) |
+| UI | React, TypeScript |
+| Runtime | Node.js |
+| Styling | Tailwind CSS |
+| Database | PostgreSQL (Neon) |
+| ORM | Prisma 6.19.3 |
+| Auth | Auth.js with Google OAuth and GitHub OAuth |
+| Payments | Stripe (Test Mode) |
+| Email | Resend |
+| Hosting | Vercel |
 
 ---
 
-# 9. Application Architecture
+## How It Works
 
-High-level architecture:
-
-```text
-                         ┌───────────────┐
-                         │     User      │
-                         └───────┬───────┘
-                                 │
-                                 ▼
-                        ┌─────────────────┐
-                        │    Next.js      │
-                        │   Application   │
-                        └───────┬─────────┘
-                                │
-              ┌─────────────────┼─────────────────┐
-              │                 │                 │
-              ▼                 ▼                 ▼
-        ┌───────────┐     ┌───────────┐     ┌───────────┐
-        │  Auth.js  │     │  Prisma   │     │  Stripe   │
-        │ OAuth     │     │ PostgreSQL│     │ Checkout  │
-        └───────────┘     └───────────┘     └─────┬─────┘
-                                                  │
-                                                  ▼
-                                           ┌─────────────┐
-                                           │ Stripe       │
-                                           │ Webhook      │
-                                           └──────┬──────┘
-                                                  │
-                                                  ▼
-                                           ┌─────────────┐
-                                           │   Resend    │
-                                           │ Confirmation│
-                                           │    Email    │
-                                           └─────────────┘
 ```
-
----
-
-# 10. User Flow
-
-The primary user journey is:
-
-```text
-Landing Page
-     ↓
-Login
-     ↓
-Google / GitHub OAuth
-     ↓
-Workshop Details
-     ↓
-Registration Form
-     ↓
-Registration Created
-     ↓
-Stripe Checkout
-     ↓
-Payment
-     ↓
-Stripe Webhook
-     ↓
-Payment Verified
-     ↓
-Registration Marked PAID
-     ↓
-Confirmation Email
-     ↓
-User Dashboard
-```
-
----
-
-# 11. Authentication Flow
-
-Authentication is handled through Auth.js.
-
-Supported providers:
-
-```text
-Google
-GitHub
-```
-
-A typical login flow is:
-
-```text
 User
- ↓
-Login page
- ↓
-Google/GitHub
- ↓
-OAuth provider
- ↓
-Callback
- ↓
-Authenticated session
- ↓
-User application
+  → OAuth sign-in (Google or GitHub)
+  → Workshop registration (authenticated, server-validated)
+  → Stripe Checkout (Test Mode)
+  → Stripe webhook (signature-verified, idempotent)
+  → Registration and payment marked confirmed
+  → Resend confirmation email (sent once)
+  → User dashboard
 ```
 
-Password authentication is not required.
+Payment state changes only when the verified webhook processes the event. The
+webhook reads the raw request body, checks the Stripe signature, resolves the
+associated registration, and applies the update safely so duplicate or retried
+deliveries do not double-charge, double-register, or send a second email.
 
 ---
 
-# 12. User Roles
+## Admin & Security
 
-The application supports two roles:
-
-```text
-USER
-ADMIN
-```
-
-New users receive:
-
-```text
-USER
-```
-
-by default.
-
-Users cannot choose or modify their own role.
-
-Only an authorized administrator can promote a user.
+- **Role assignment** is controlled server-side through the `ADMIN_EMAILS`
+  allowlist. An account whose verified email is on that list is promoted to the
+  `ADMIN` role on sign-in; roles are never set from anything the client sends.
+- **Admin data access is gated on the server.** Every admin query runs behind an
+  authorization check — a signed-in non-admin receives a 404, and an anonymous
+  visitor is redirected to sign in. Hiding navigation links is not relied on as
+  a security measure.
+- **Server-controlled pricing** — the charged amount is read from the workshop
+  record on the server.
+- **Webhook signature verification** against the raw body, with idempotent
+  payment handling.
+- **Duplicate registrations** are prevented by a database constraint.
 
 ---
 
-# 13. Authorization
+## Design & UX
 
-Authorization must happen server-side.
+The interface follows an editorial direction rather than a generic dashboard
+template: a serif display face paired with a technical sans and monospace for
+metadata, a cool-paper palette with a single accent colour, hairline rules, and
+generous whitespace with a clear type hierarchy.
 
-The application must not depend on frontend checks such as:
-
-```tsx
-if (user.role === "ADMIN") {
-  // show admin page
-}
-```
-
-Hiding a button is not security.
-
-Instead, protected server routes must verify:
-
-1. The user is authenticated.
-2. The user has the correct role.
-
-The following areas are protected:
-
-```text
-/admin
-/admin/users
-admin API routes
-administrative server actions
-```
-
-A regular USER accessing an admin URL directly must be denied.
+- Server-first rendering with the Next.js App Router; client components are used
+  only where interaction requires them.
+- Responsive layouts from small mobile widths up to wide desktop.
+- Restrained motion that respects `prefers-reduced-motion` and leaves all
+  content visible without JavaScript.
+- Accessibility: one `h1` per page, semantic `header` / `nav` / `main` /
+  `footer` landmarks, a visible keyboard focus ring, form fields with associated
+  labels and accessible error messages, and status communicated with text and an
+  icon rather than colour alone.
 
 ---
 
-# 14. Database
+## Project Structure
 
-PostgreSQL is used as the primary database.
-
-Prisma provides the database access layer.
-
-Core models include:
-
-```text
-User
-Account
-Session
-Workshop
-Registration
-Payment
+```
+app/          Routes (App Router pages) and API route handlers
+components/   UI primitives and feature components
+              (ui, navigation, workshop, registration, checkout, admin, success)
+lib/          Server logic — Auth.js config, Prisma client, Stripe, Resend email,
+              permission helpers, domain helpers, and input validation
+prisma/       Prisma schema, migrations, and the database seed script
+public/       Static assets
+types/        TypeScript module augmentation (Auth.js session and user types)
 ```
 
 ---
 
-# 15. User Model
-
-The User model supports authentication and authorization.
-
-Typical fields include:
-
-```text
-id
-name
-email
-image
-role
-createdAt
-updatedAt
-```
-
-Role:
-
-```text
-USER
-ADMIN
-```
-
-The default role is:
-
-```text
-USER
-```
-
----
-
-# 16. Workshop Model
-
-The Workshop model represents the event.
-
-Typical fields include:
-
-```text
-id
-title
-description
-date
-location
-price
-currency
-capacity
-createdAt
-updatedAt
-```
-
-The workshop price is controlled by the server.
-
-The browser must never be trusted to decide the final payment amount.
-
----
-
-# 17. Registration Model
-
-A registration belongs to a user and workshop.
-
-Typical fields include:
-
-```text
-id
-userId
-workshopId
-fullName
-email
-phone
-organization
-status
-createdAt
-updatedAt
-```
-
-Possible statuses:
-
-```text
-PENDING
-PAID
-CANCELLED
-```
-
-Duplicate registrations should be prevented through database constraints and server-side validation.
-
----
-
-# 18. Payment Model
-
-The Payment model stores payment information.
-
-Typical fields include:
-
-```text
-id
-registrationId
-stripeSessionId
-stripePaymentIntentId
-amount
-currency
-status
-createdAt
-updatedAt
-```
-
-Possible statuses:
-
-```text
-PENDING
-PAID
-FAILED
-REFUNDED
-```
-
-Stripe identifiers are stored to allow payment reconciliation.
-
----
-
-# 19. Registration Validation
-
-Registration fields:
-
-```text
-Full Name
-Email
-Phone
-Organization / Institution
-```
-
-Validation happens both:
-
-- client-side
-- server-side
-
-Client-side validation is for user experience.
-
-Server-side validation is the security boundary.
-
----
-
-# 20. Stripe Payment Flow
-
-The application uses Stripe Checkout in TEST MODE.
-
-The flow is:
-
-```text
-Registration
-     ↓
-Server creates Checkout Session
-     ↓
-User redirected to Stripe
-     ↓
-Test payment completed
-     ↓
-Stripe sends webhook
-     ↓
-Application verifies webhook signature
-     ↓
-Payment updated
-     ↓
-Registration marked PAID
-```
-
----
-
-# 21. Important Payment Security Rule
-
-The application must never mark a payment as successful solely because the user arrives at:
-
-```text
-/success
-```
-
-The success redirect is only a user-facing redirect.
-
-The source of truth is the verified Stripe webhook.
-
-Correct:
-
-```text
-Stripe payment
-     ↓
-verified webhook
-     ↓
-database update
-```
-
-Incorrect:
-
-```text
-Stripe payment
-     ↓
-redirect
-     ↓
-assume payment succeeded
-```
-
----
-
-# 22. Stripe Webhook
-
-The webhook endpoint receives Stripe events.
-
-The application must:
-
-1. Read the raw request body.
-2. Verify the Stripe signature.
-3. Identify the associated registration.
-4. Check the current payment state.
-5. Update the database safely.
-6. Avoid duplicate processing.
-7. Trigger email confirmation when appropriate.
-
-Stripe webhook processing must be idempotent.
-
-Stripe may retry events.
-
-A repeated webhook must not create:
-
-- duplicate payments
-- duplicate registrations
-- duplicate emails
-
----
-
-# 23. Confirmation Email
-
-After successful verified payment, the user receives a confirmation email.
-
-The email should contain:
-
-```text
-SUMMIT SOCIALS
-
-REGISTRATION CONFIRMED
-
-Name
-Workshop
-Date
-Location
-Registration ID
-Payment Status
-```
-
-The email should visually match the website.
-
-The email must not be sent merely because a user reaches the success page.
-
----
-
-# 24. Frontend Routes
-
-The main routes are:
-
-```text
-/
-```
-
-Landing page.
-
-```text
-/login
-```
-
-OAuth authentication.
-
-```text
-/register
-```
-
-Workshop registration.
-
-```text
-/checkout
-```
-
-Checkout preparation / payment initiation.
-
-```text
-/success
-```
-
-Payment result.
-
-```text
-/dashboard
-```
-
-Authenticated user's registration details.
-
-```text
-/admin
-```
-
-Protected admin dashboard.
-
-```text
-/admin/users
-```
-
-Protected registered-user list.
-
----
-
-# 25. API Routes
-
-API routes should be organized around application responsibilities.
-
-Example structure:
-
-```text
-/api/auth/*
-/api/registration/*
-/api/checkout/*
-/api/stripe/webhook
-```
-
-Sensitive logic should execute server-side.
-
-Never expose:
-
-```text
-DATABASE_URL
-AUTH_SECRET
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-RESEND_API_KEY
-```
-
-to the browser.
-
----
-
-# 26. Project Structure
-
-The project should approximately follow:
-
-```text
-event-platform/
-│
-├── app/
-│   ├── page.tsx
-│   │
-│   ├── login/
-│   │   └── page.tsx
-│   │
-│   ├── register/
-│   │   └── page.tsx
-│   │
-│   ├── checkout/
-│   │   └── page.tsx
-│   │
-│   ├── success/
-│   │   └── page.tsx
-│   │
-│   ├── dashboard/
-│   │   └── page.tsx
-│   │
-│   ├── admin/
-│   │   ├── page.tsx
-│   │   └── users/
-│   │       └── page.tsx
-│   │
-│   └── api/
-│       ├── auth/
-│       ├── registration/
-│       ├── checkout/
-│       └── stripe/
-│           └── webhook/
-│
-├── components/
-│   ├── ui/
-│   ├── navigation/
-│   ├── workshop/
-│   ├── registration/
-│   ├── checkout/
-│   └── admin/
-│
-├── lib/
-│   ├── auth.ts
-│   ├── prisma.ts
-│   ├── stripe.ts
-│   ├── email.ts
-│   └── permissions.ts
-│
-├── prisma/
-│   └── schema.prisma
-│
-├── public/
-│
-├── .env.example
-├── .gitignore
-├── CLAUDE.md
-├── package.json
-└── README.md
-```
-
----
-
-# 27. Environment Variables
-
-Create a local environment file.
-
-Example:
-
-```env
-DATABASE_URL=
-
-AUTH_SECRET=
-
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-
-RESEND_API_KEY=
-
-NEXT_PUBLIC_APP_URL=
-```
-
-Never commit the real `.env` file.
-
-Commit:
-
-```text
-.env.example
-```
-
-Do not commit:
-
-```text
-.env
-.env.local
-```
-
----
-
-# 28. Local Development
-
-## 1. Clone the repository
+## Local Setup
 
 ```bash
-git clone YOUR_REPOSITORY_URL
-```
-
-Then:
-
-```bash
-cd event-platform
-```
-
-## 2. Install dependencies
-
-```bash
+# 1. Install dependencies (also runs `prisma generate`)
 npm install
+
+# 2. Create your environment file and fill in your own values
+cp .env.example .env
+
+# 3. Apply the database schema
+npm run db:migrate        # local development (prisma migrate dev)
+
+# 4. Seed the workshop record
+npm run db:seed
+
+# 5. Start the development server
+npm run dev               # http://localhost:3000
 ```
 
-## 3. Configure environment variables
-
-Create:
-
-```text
-.env.local
-```
-
-Fill in the required variables.
-
-## 4. Generate Prisma Client
-
-```bash
-npx prisma generate
-```
-
-## 5. Run database migrations
-
-For development:
-
-```bash
-npx prisma migrate dev
-```
-
-## 6. Start the development server
-
-```bash
-npm run dev
-```
-
-The application should then be available at:
-
-```text
-http://localhost:3000
-```
+For local payment testing, use the Stripe CLI to forward test-mode events to
+`/api/stripe/webhook` and copy the signing secret it prints into your
+environment file.
 
 ---
 
-# 29. Useful Commands
+## Environment Variables
 
-## Start development server
+Configure these in `.env` for local development and in the hosting provider for
+deployment. Names only — no values are committed. See `.env.example` for the
+template.
 
-```bash
-npm run dev
-```
-
-## Build application
-
-```bash
-npm run build
-```
-
-## Start production build
-
-```bash
-npm start
-```
-
-## Run lint
-
-```bash
-npm run lint
-```
-
-## Generate Prisma Client
-
-```bash
-npx prisma generate
-```
-
-## Create database migration
-
-```bash
-npx prisma migrate dev
-```
-
-## Open Prisma Studio
-
-```bash
-npx prisma studio
-```
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | Pooled PostgreSQL connection used at runtime |
+| `DIRECT_URL` | Direct PostgreSQL connection used for migrations |
+| `AUTH_SECRET` | Auth.js session/token signing secret |
+| `AUTH_URL` | Canonical application URL for Auth.js |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `GITHUB_CLIENT_ID` | GitHub OAuth client ID |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret |
+| `STRIPE_SECRET_KEY` | Stripe secret key (test mode) |
+| `STRIPE_WEBHOOK_SECRET` | Signing secret for the Stripe webhook endpoint |
+| `RESEND_API_KEY` | Resend API key for transactional email |
+| `EMAIL_FROM` | Verified sender address for confirmation emails |
+| `NEXT_PUBLIC_APP_URL` | Public base URL used to build absolute links |
+| `ADMIN_EMAILS` | Comma-separated allowlist of admin email addresses |
 
 ---
 
-# 30. Google OAuth
+## Testing
 
-Create a Google OAuth application in Google Cloud.
+The following flows were exercised during development:
 
-Configure the local callback URL required by the Auth.js configuration.
+- **Authentication** — Google and GitHub sign-in, sign-out, and session
+  persistence across reloads.
+- **Registration** — valid submissions, invalid input, and duplicate-registration
+  handling.
+- **Stripe test payment** — Checkout Session creation and a successful test
+  payment with card `4242 4242 4242 4242`.
+- **Webhook** — signature verification and safe handling of duplicate or retried
+  event delivery.
+- **Confirmation email** — a single email sent after a verified payment, with no
+  duplicate on webhook retry.
+- **Admin authorization** — a normal user cannot reach the admin pages or data;
+  an allowlisted admin can.
+- **Responsive and accessibility checks** — layouts from ~360px to wide desktop,
+  keyboard navigation, landmark structure, text contrast, and reduced-motion
+  behaviour.
 
-For production, update the OAuth configuration to use the deployed application domain.
-
-Do not hardcode production credentials inside the source code.
-
----
-
-# 31. GitHub OAuth
-
-Create a GitHub OAuth application.
-
-Configure the callback URL required by the Auth.js configuration.
-
-Use separate environment variables for the client ID and client secret.
-
----
-
-# 32. Stripe TEST Mode
-
-Use Stripe TEST MODE during development and evaluation.
-
-Do not use live payment credentials for this assignment.
-
-Configure the webhook using the deployed URL.
-
-Example:
-
-```text
-https://YOUR-DOMAIN/api/stripe/webhook
-```
-
-The exact URL depends on the deployment.
+`npm run lint`, `npm run typecheck`, and `npm run build` are run as part of the
+workflow.
 
 ---
 
-# 33. Testing Stripe Locally
+## Deployment
 
-For local webhook testing, a Stripe webhook forwarding workflow can be used.
-
-The important requirement is:
-
-```text
-Stripe event
-       ↓
-verified webhook
-       ↓
-local application
-```
-
-Never disable signature verification merely to make local development easier.
+- Deployed on **Vercel**, with the repository connected to **GitHub** for
+  continuous deployment from the main branch.
+- **PostgreSQL** is hosted on **Neon**.
+- **Stripe** runs in **Test Mode**, with a webhook endpoint configured for the
+  deployed URL.
+- **Resend** handles transactional email in the deployed environment.
+- Production environment variables are set in the Vercel project settings.
 
 ---
 
-# 34. Admin Setup
-
-New users are regular users:
-
-```text
-USER
-```
-
-An initial administrator must be configured securely.
-
-The role must never be editable by an ordinary user from the frontend.
-
-Admin access should be granted through a controlled server/database procedure.
-
----
-
-# 35. Admin Dashboard
-
-The admin dashboard should provide operational information such as:
-
-```text
-REGISTRATIONS
-48
-
-PAID
-42
-
-PENDING
-6
-```
-
-And a registered-user table:
-
-```text
-NAME
-EMAIL
-REGISTRATION ID
-PAYMENT
-DATE
-```
-
-Useful search and filtering can be included.
-
-Avoid turning the admin area into an unnecessarily complex analytics application.
-
----
-
-# 36. User Dashboard
-
-The user dashboard should show the currently authenticated user's information.
-
-Example:
-
-```text
-SUMMIT SOCIALS
-
-YOUR REGISTRATION
-
-WORKSHOP
-Prompt to Product
-
-DATE
-12 October 2026
-
-LOCATION
-Bengaluru
-
-REGISTRATION
-SS-2026-0042
-
-PAYMENT
-PAID
-```
-
-A user must never see another user's registration details.
-
----
-
-# 37. Landing Page
-
-The landing page is the visual centerpiece of the project.
-
-A possible composition:
-
-```text
-SUMMIT SOCIALS
-
-A WORKSHOP IN
-MAKING THINGS
-THAT LAST.
-
-12 OCTOBER 2026
-BENGALURU
-48 SEATS
-
-[ RESERVE YOUR SEAT ]
-```
-
-Then:
-
-```text
-THE WORKSHOP
-```
-
-followed by the event description.
-
-Then:
-
-```text
-WHAT YOU'LL LEARN
-
-01
-Ideation
-
-02
-Prototyping
-
-03
-Building
-
-04
-Shipping
-```
-
-Then:
-
-```text
-THE DETAILS
-
-DATE
-LOCATION
-DURATION
-CAPACITY
-```
-
-Then:
-
-```text
-YOUR PLACE
-
-₹999
-
-[ RESERVE ]
-```
-
-The exact layout can evolve as long as the visual identity remains coherent.
-
----
-
-# 38. Responsive Design
-
-The application must work on:
-
-- desktop
-- tablet
-- mobile
-
-Mobile layouts should be intentionally designed rather than simply shrinking the desktop layout.
-
-Verify:
-
-- navigation
-- typography
-- forms
-- CTA buttons
-- registration flow
-- tables
-- payment pages
-- dashboard
-- spacing
-- images
-
----
-
-# 39. Accessibility
-
-Use:
-
-- semantic HTML
-- proper heading hierarchy
-- accessible labels
-- keyboard navigation
-- visible focus states
-- readable contrast
-- useful form error messages
-- descriptive buttons
-
-Do not communicate important information through color alone.
-
----
-
-# 40. Error Handling
-
-Important operations must have proper states.
-
-Examples:
-
-```text
-Authentication failed
-Registration failed
-Already registered
-Checkout could not be created
-Payment cancelled
-Payment processing
-Payment verification failed
-Email could not be sent
-Server error
-```
-
-Never expose server stack traces to users.
-
----
-
-# 41. Loading States
-
-Async actions should show meaningful loading states.
-
-Examples:
-
-```text
-Signing in...
-Creating registration...
-Redirecting to checkout...
-Processing payment...
-Loading registration...
-```
-
-Prevent accidental duplicate submissions.
-
----
-
-# 42. Security Checklist
-
-Before deployment verify:
-
-- [ ] Authentication works
-- [ ] Authorization works
-- [ ] Admin routes are server-protected
-- [ ] Users cannot change their own role
-- [ ] Users cannot access another user's data
-- [ ] Stripe secret is server-only
-- [ ] Stripe webhook signature is verified
-- [ ] Payment amount is server-controlled
-- [ ] Duplicate registration is prevented
-- [ ] Duplicate webhook events are handled
-- [ ] Duplicate emails are prevented
-- [ ] Environment secrets are not committed
-- [ ] Client cannot directly modify payment status
-- [ ] Client cannot directly modify user role
-
----
-
-# 43. Testing Checklist
-
-## Authentication
-
-- [ ] Google login
-- [ ] GitHub login
-- [ ] Logout
-- [ ] Session persistence
-
-## Registration
-
-- [ ] Valid registration
-- [ ] Invalid form data
-- [ ] Missing fields
-- [ ] Duplicate registration
-
-## Payments
-
-- [ ] Checkout session created
-- [ ] Test payment succeeds
-- [ ] Payment cancellation works
-- [ ] Webhook received
-- [ ] Webhook signature verified
-- [ ] Payment marked PAID
-- [ ] Duplicate webhook handled
-
-## Email
-
-- [ ] Confirmation email sent
-- [ ] Correct user receives email
-- [ ] Duplicate email prevented
-
-## Admin
-
-- [ ] Admin can access admin dashboard
-- [ ] Normal user cannot access admin
-- [ ] Registered users visible to admin
-- [ ] Payment status visible
-
-## Responsive
-
-- [ ] Desktop
-- [ ] Tablet
-- [ ] Mobile
-
----
-
-# 44. Production Deployment
-
-The intended deployment architecture is:
-
-```text
-GitHub
-   ↓
-Vercel
-   ↓
-Next.js
-   ↓
-PostgreSQL
-   ↓
-Stripe
-   ↓
-Resend
-```
-
----
-
-# 45. Vercel Deployment
-
-1. Push the repository to GitHub.
-2. Open Vercel.
-3. Import the repository.
-4. Configure environment variables.
-5. Deploy.
-6. Verify the production URL.
-
-Production environment variables must be configured in Vercel.
-
-Do not copy secrets into source code.
-
----
-
-# 46. Production OAuth
-
-After deployment, update Google and GitHub OAuth applications to use the production callback URL required by Auth.js.
-
-Verify:
-
-```text
-localhost
-```
-
-and:
-
-```text
-production domain
-```
-
-are configured appropriately.
-
----
-
-# 47. Production Stripe Webhook
-
-Create the Stripe webhook endpoint using the production domain:
-
-```text
-https://YOUR-DOMAIN/api/stripe/webhook
-```
-
-Use Stripe TEST MODE for the assignment.
-
-Copy the webhook signing secret into the appropriate Vercel environment variable.
-
----
-
-# 48. Production Email
-
-Configure the Resend API key in Vercel.
-
-Verify that the sending domain/email configuration is valid.
-
-Test the complete:
-
-```text
-registration
-→ payment
-→ webhook
-→ email
-```
-
-flow after deployment.
-
----
-
-# 49. Final End-to-End Test
-
-Before submission, perform the entire flow using the deployed application.
-
-```text
-1. Open deployed website
-2. Sign in with Google/GitHub
-3. Open workshop
-4. Submit registration
-5. Start Stripe Checkout
-6. Complete Stripe TEST payment
-7. Return to application
-8. Verify payment status
-9. Verify registration status
-10. Verify confirmation email
-11. Open user dashboard
-12. Verify admin account
-13. Open admin dashboard
-14. Verify registered user appears
-15. Verify normal user cannot open admin
-```
-
----
-
-# 50. Git Workflow
-
-Use focused commits.
-
-Examples:
-
-```bash
-git add .
-git commit -m "feat: create application foundation"
-```
-
-```bash
-git add .
-git commit -m "feat: add OAuth authentication"
-```
-
-```bash
-git add .
-git commit -m "feat: add workshop registration"
-```
-
-```bash
-git add .
-git commit -m "feat: integrate Stripe checkout"
-```
-
-```bash
-git add .
-git commit -m "feat: add Stripe webhook"
-```
-
-```bash
-git add .
-git commit -m "feat: add confirmation email"
-```
-
-```bash
-git add .
-git commit -m "feat: create admin dashboard"
-```
-
-```bash
-git add .
-git commit -m "style: refine Summit Socials frontend"
-```
-
----
-
-# 51. Development Principles
-
-The project prioritizes:
-
-```text
-1. Correctness
-2. Security
-3. Reliability
-4. Usability
-5. Visual identity
-6. Deployment
-```
-
-Do not introduce complexity without a concrete reason.
-
-The goal is not to build the largest possible application.
-
-The goal is to build a believable real-world event platform that demonstrates strong engineering.
-
----
-
-# 52. What This Project Does Not Need
-
-Do not add unnecessary functionality such as:
-
-- chatbot
-- AI recommendations
-- social feed
-- comments
-- likes
-- event marketplace
-- multi-tenant architecture
-- microservices
-- Kubernetes
-- GraphQL
-- Redis
-- unnecessary analytics
-- recommendation engines
-
-unless explicitly required later.
-
----
-
-# 53. Frontend Quality Standard
-
-Every page should feel part of the same product.
-
-The following should be consistent:
-
-- typography
-- spacing
-- borders
-- button behavior
-- colors
-- animation
-- metadata
-- navigation
-- visual rhythm
-
-Do not design each page independently.
-
----
-
-# 54. AI-Generated UI Warning
-
-Avoid patterns such as:
-
-```text
-Hero
-↓
-Three Cards
-↓
-Three More Cards
-↓
-Testimonials
-↓
-Pricing Cards
-↓
-Gradient CTA
-```
-
-This often results in a generic AI-generated appearance.
-
-Instead, use intentional layouts.
-
-The website should look like an independent creative studio created it.
-
----
-
-# 55. Motion Guidelines
-
-Motion should support hierarchy.
-
-Good:
-
-```text
-fade + rise
-stagger
-image reveal
-hover movement
-section entrance
-page transitions
-```
-
-Bad:
-
-```text
-constant bouncing
-floating everything
-heavy parallax
-random particle effects
-continuous background animation
-```
-
-Use animation sparingly.
-
----
-
-# 56. Definition of Done
-
-The application is considered complete only when:
-
-### Functionality
-
-- [ ] Google login works
-- [ ] GitHub login works
-- [ ] Registration works
-- [ ] Stripe TEST payment works
-- [ ] Stripe webhook works
-- [ ] Confirmation email works
-- [ ] User dashboard works
-- [ ] Admin dashboard works
-
-### Security
-
-- [ ] Backend routes protected
-- [ ] Admin authorization protected
-- [ ] User data isolated
-- [ ] Secrets protected
-- [ ] Stripe signatures verified
-- [ ] Payment amount controlled server-side
-- [ ] Duplicate operations handled
-
-### Frontend
-
-- [ ] Distinct Summit Socials visual identity
-- [ ] Responsive design
-- [ ] Accessible forms
-- [ ] Loading states
-- [ ] Error states
-- [ ] Motion interactions
-- [ ] No generic AI-style SaaS layout
-
-### Deployment
-
-- [ ] GitHub repository
-- [ ] Vercel deployment
-- [ ] Production database
-- [ ] OAuth configured
-- [ ] Stripe webhook configured
-- [ ] Resend configured
-- [ ] Full production flow tested
-
----
-
-# 57. Project Status
-
-Update this section as development progresses.
-
-Current status:
-
-```text
-Frontend:        In Development
-Authentication:  In Development
-Database:        In Development
-Registration:    In Development
-Stripe:          In Development
-Email:           In Development
-Admin:           In Development
-Deployment:      Pending
-```
-
-Do not mark a component as complete until it has been implemented and tested.
-
----
-
-# 58. Author
-
-Event Platform / Summit Socials
-
-Built as a university web development project demonstrating:
-
-- modern frontend development
-- OAuth authentication
-- relational database design
-- secure backend APIs
-- payment integration
-- webhook handling
-- transactional email
-- role-based authorization
-- production deployment
+## Academic / Engineering Highlights
+
+A real-world full-stack web development project that demonstrates:
+
+- **Authentication** with a third-party identity provider (OAuth) and
+  database-backed sessions.
+- **Authorization** enforced server-side, including role-based access control.
+- **Relational database design** with Prisma migrations and a seed workflow.
+- **Payment integration** using Stripe Checkout in Test Mode with a
+  server-controlled amount.
+- **Webhook processing** with signature verification and idempotent state
+  updates.
+- **Transactional email** delivered once after a verified payment.
+- **Responsive frontend engineering** with an editorial design system and
+  accessibility as a first-class concern.
