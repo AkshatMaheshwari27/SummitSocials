@@ -1,37 +1,26 @@
-import { IconTile } from "@/components/ui/IconTile";
-import { Icon, type IconName } from "@/components/ui/Icon";
 import { Reveal } from "@/lib/motion";
 
 export type LearnItem = {
   n: string;
-  icon: IconName;
-  tone: "green" | "sky" | "coral" | "lavender";
   title: string;
   body: string;
 };
 
 export function LearnGrid({ items }: { items: LearnItem[] }) {
   return (
-    <div className="grid gap-5 sm:grid-cols-2">
+    <ol className="border-t border-rule">
       {items.map((item, i) => (
-        <Reveal key={item.n} delay={i * 0.04}>
-          <div className="panel-soft h-full p-6 transition-transform hover:-translate-y-1">
-            <div className="flex items-start justify-between">
-              <IconTile icon={item.icon} tone={item.tone} />
-              <span className="pill bg-green-soft text-green-ink">
-                <Icon name="book" className="size-3.5" strokeWidth={2.5} />
-                Module {item.n}
-              </span>
-            </div>
-            <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-ink">
+        <Reveal key={item.n} as="li" delay={i * 0.03}>
+          <div className="grid grid-cols-[2rem_1fr] gap-x-4 gap-y-1 border-b border-rule py-5">
+            <span className="font-mono text-sm text-ink-faint">{item.n}</span>
+            <h4 className="font-display text-lg font-medium text-ink">
               {item.title}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-              {item.body}
-            </p>
+            </h4>
+            <span aria-hidden />
+            <p className="text-sm leading-relaxed text-ink-soft">{item.body}</p>
           </div>
         </Reveal>
       ))}
-    </div>
+    </ol>
   );
 }

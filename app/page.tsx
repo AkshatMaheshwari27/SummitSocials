@@ -27,43 +27,31 @@ const WHATS_ON_LEDE =
 const LEARN: LearnItem[] = [
   {
     n: "01",
-    icon: "sparkle",
-    tone: "coral",
     title: "AI fundamentals",
     body: "How models work in practice — tokens, context, and what they are and aren't good at.",
   },
   {
     n: "02",
-    icon: "wand",
-    tone: "sky",
     title: "Prompt engineering",
     body: "Prompts that return what you need: system messages, structure, and constraints.",
   },
   {
     n: "03",
-    icon: "plug",
-    tone: "lavender",
     title: "API integration",
     body: "Calling a model from your own code — keys, requests, streaming, and failures.",
   },
   {
     n: "04",
-    icon: "layers",
-    tone: "green",
     title: "Building the interface",
     body: "Wrapping the model in a real UI with input, loading, and result states.",
   },
   {
     n: "05",
-    icon: "code",
-    tone: "coral",
     title: "Connecting the pieces",
     body: "Wiring prompt, API, and interface into one flow that works end to end.",
   },
   {
     n: "06",
-    icon: "rocket",
-    tone: "sky",
     title: "Deploying the project",
     body: "Environment variables, a deploy, and a live URL you can share the same day.",
   },
@@ -202,6 +190,12 @@ export default async function HomePage() {
                     Level
                   </dt>
                   <dd className="text-ink">Beginner-friendly</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-ink-faint">
+                    Organiser
+                  </dt>
+                  <dd className="text-ink">Summit Socials</dd>
                 </div>
               </dl>
             </div>
