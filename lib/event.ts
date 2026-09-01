@@ -36,3 +36,37 @@ export function getEventAvailability(
     label,
   };
 }
+
+/**
+ * A minimal iCalendar VEVENT for a confirmed registration. Deterministic and
+ * built entirely from the workshop row — meant to be served as a data: URI on
+ * a download link, no endpoint required.
+ */
+export function buildIcs(opts: {
+  uid: string;
+  title: string;
+  start: Date;
+  durationMinutes: number;
+  location: string;
+}): string {
+  const fmt = (d: Date) =>
+    d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const end = new Date(opts.start.getTime() + opts.durationMinutes * 60_000);
+  const esc = (s: string) => s.replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
+
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Summit Socials//Event Platform//EN",
+    "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
+    `UID:${opts.uid}`,
+    `DTSTAMP:${fmt(opts.start)}`,
+    `DTSTART:${fmt(opts.start)}`,
+    `DTEND:${fmt(end)}`,
+    `SUMMARY:${esc(opts.title)}`,
+    `LOCATION:${esc(opts.location)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+}
