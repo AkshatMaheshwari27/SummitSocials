@@ -105,69 +105,85 @@ export function RegistrationForm({
   }
 
   return (
-    <form onSubmit={onFormSubmit} noValidate className="flex flex-col gap-4">
+    <form onSubmit={onFormSubmit} noValidate className="flex flex-col gap-8">
       {formError && (
         <p
           ref={summaryRef}
           tabIndex={-1}
           role="alert"
-          className="border-2 border-ink bg-danger-soft px-3 py-2.5 text-sm font-semibold text-danger outline-none"
-          style={{ borderRadius: "12px" }}
+          className="rounded-md border border-danger bg-danger-soft px-3 py-2.5 text-sm font-medium text-danger outline-none"
         >
           {formError}
         </p>
       )}
 
-      <Field
-        label="Full name"
-        name="fullName"
-        autoComplete="name"
-        value={values.fullName}
-        errors={fieldErrors.fullName}
-        onChange={(e) => update("fullName", e.target.value)}
-      />
-      <Field
-        label="Email"
-        name="email"
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-        value={values.email}
-        errors={fieldErrors.email}
-        onChange={(e) => update("email", e.target.value)}
-      />
-      <Field
-        label="Phone"
-        name="phone"
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel"
-        value={values.phone}
-        errors={fieldErrors.phone}
-        onChange={(e) => update("phone", e.target.value)}
-      />
-      <Field
-        label="Organization or institution"
-        name="organization"
-        autoComplete="organization"
-        value={values.organization}
-        errors={fieldErrors.organization}
-        onChange={(e) => update("organization", e.target.value)}
-      />
+      <fieldset>
+        <legend className="font-mono text-xs uppercase tracking-[0.1em] text-ink-faint">
+          About you
+        </legend>
+        <div className="mt-3 flex flex-col gap-4">
+          <Field
+            label="Full name"
+            name="fullName"
+            autoComplete="name"
+            value={values.fullName}
+            errors={fieldErrors.fullName}
+            onChange={(e) => update("fullName", e.target.value)}
+          />
+          <Field
+            label="Email"
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            value={values.email}
+            errors={fieldErrors.email}
+            onChange={(e) => update("email", e.target.value)}
+          />
+        </div>
+      </fieldset>
 
-      <Button
-        type="button"
-        onClick={() => void submit()}
-        loading={pending}
-        size="lg"
-        variant="green"
-        className="mt-2 w-full"
-      >
-        {pending ? "Taking you to payment…" : "Continue to payment"}
-      </Button>
-      <p className="text-center text-xs text-ink-faint">
-        Secure payment by Stripe. One registration per person.
-      </p>
+      <fieldset className="border-t border-rule pt-6">
+        <legend className="font-mono text-xs uppercase tracking-[0.1em] text-ink-faint">
+          Where you&rsquo;re from
+        </legend>
+        <div className="mt-3 flex flex-col gap-4">
+          <Field
+            label="Phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            value={values.phone}
+            errors={fieldErrors.phone}
+            onChange={(e) => update("phone", e.target.value)}
+          />
+          <Field
+            label="Organization or institution"
+            name="organization"
+            autoComplete="organization"
+            value={values.organization}
+            errors={fieldErrors.organization}
+            onChange={(e) => update("organization", e.target.value)}
+          />
+        </div>
+      </fieldset>
+
+      <div>
+        <Button
+          type="button"
+          onClick={() => void submit()}
+          loading={pending}
+          size="lg"
+          variant="green"
+          className="w-full"
+        >
+          {pending ? "Taking you to payment…" : "Continue to payment"}
+        </Button>
+        <p className="mt-3 text-center font-mono text-xs text-ink-faint">
+          Secure payment by Stripe. One registration per person.
+        </p>
+      </div>
     </form>
   );
 }

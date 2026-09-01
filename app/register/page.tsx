@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { RegistrationForm } from "@/components/registration/RegistrationForm";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
-import { Icon } from "@/components/ui/Icon";
 import { Pill } from "@/components/ui/Pill";
 import { requireUser } from "@/lib/permissions";
 import { getMyRegistration } from "@/lib/registration";
@@ -18,7 +17,14 @@ export default async function RegisterPage() {
   if (!workshop) {
     return (
       <Container className="py-[var(--section-y)]">
-        <p className="lede">Registration isn&rsquo;t open yet.</p>
+        <div className="max-w-prose">
+          <p className="pill">Summit Socials</p>
+          <h1 className="h-section mt-4">Registration isn&rsquo;t open yet.</h1>
+          <p className="lede mt-3">
+            There&rsquo;s no event scheduled right now. This page will reopen
+            once the next one is announced.
+          </p>
+        </div>
       </Container>
     );
   }
@@ -30,6 +36,11 @@ export default async function RegisterPage() {
   }
 
   const price = formatPrice(workshop.priceMinor, workshop.currency);
+  const facts = [
+    { label: "Date", value: formatWorkshopDate(workshop.date) },
+    { label: "Time", value: EVENT_TIME },
+    { label: "Venue", value: workshop.location },
+  ];
 
   return (
     <Container className="py-[var(--section-y)]">
@@ -41,7 +52,7 @@ export default async function RegisterPage() {
           seat is locked in.
         </p>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_20rem]">
+        <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_19rem]">
           <Card className="p-6 sm:p-8">
             <RegistrationForm
               defaultValues={{
@@ -51,28 +62,35 @@ export default async function RegisterPage() {
             />
           </Card>
 
-          <aside className="panel h-fit bg-sky-soft p-6">
-            <Pill tone="white">You&rsquo;re enrolling in</Pill>
-            <h2 className="mt-3 font-display text-lg font-bold tracking-tight text-ink">
+          <aside className="h-fit rounded-[var(--radius-lg)] border border-rule p-6">
+            <p className="font-mono text-xs uppercase tracking-[0.1em] text-ink-faint">
+              You&rsquo;re enrolling in
+            </p>
+            <h2 className="mt-2 font-display text-xl font-medium tracking-tight text-ink">
               {workshop.title}
             </h2>
-            <dl className="mt-4 space-y-2.5 text-sm text-ink">
-              <div className="flex items-center gap-2.5">
-                <Icon name="calendar" className="size-4 text-ink-soft" strokeWidth={2.25} />
-                {formatWorkshopDate(workshop.date)}
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Icon name="clock" className="size-4 text-ink-soft" strokeWidth={2.25} />
-                {EVENT_TIME}
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Icon name="pin" className="size-4 text-ink-soft" strokeWidth={2.25} />
-                {workshop.location}
-              </div>
+
+            <dl className="mt-5 grid gap-3">
+              {facts.map((f) => (
+                <div
+                  key={f.label}
+                  className="flex items-baseline justify-between gap-4 border-b border-rule pb-2.5 last:border-0 last:pb-0"
+                >
+                  <dt className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-ink-faint">
+                    {f.label}
+                  </dt>
+                  <dd className="text-right text-sm font-medium text-ink">
+                    {f.value}
+                  </dd>
+                </div>
+              ))}
             </dl>
-            <div className="mt-5 flex items-baseline justify-between border-t-2 border-ink/15 pt-4">
-              <span className="text-sm font-bold text-ink-soft">Total</span>
-              <span className="font-display text-2xl font-bold tracking-tight text-ink">
+
+            <div className="mt-5 flex items-baseline justify-between border-t border-rule-strong pt-4">
+              <span className="font-mono text-xs uppercase tracking-[0.08em] text-ink-faint">
+                Total
+              </span>
+              <span className="font-display text-2xl font-medium tracking-tight text-ink">
                 {price}
               </span>
             </div>
